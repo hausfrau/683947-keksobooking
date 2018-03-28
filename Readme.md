@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Ольга Огаркова](https://up.htmlacademy.ru/javascript/13/user/683947).
-* Наставник: `Неизвестно`.
+* Наставник: `Егор Огарков`.
 
 ---
 
