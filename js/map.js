@@ -17,9 +17,11 @@ var getRandomInt = function (min, max) {
 
 var getShuffleArray = function (sourceArray) {
   var returnArray = sourceArray.slice(0, sourceArray.length);
+  var j = 0;
+  var temp = 0;
   for (var i = returnArray.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var temp = returnArray[i];
+    j = Math.floor(Math.random() * (i + 1));
+    temp = returnArray[i];
     returnArray[i] = returnArray[j];
     returnArray[j] = temp;
   }
