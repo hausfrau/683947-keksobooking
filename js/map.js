@@ -15,28 +15,45 @@ var getRandomInt = function (min, max) {
   return rand;
 };
 
+var getShuffleArray = function (sourceArray) {
+  var returnArray = sourceArray.slice(0, sourceArray.length);
+  var i, j, temp;
+  for (i = returnArray.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    temp = returnArray[i];
+    returnArray[i] = returnArray[j];
+    returnArray[j] = temp;
+  }
+  return returnArray;
+};
+
+var getShuffleArrayWithShuffleLength = function (sourceArray) {
+  return getShuffleArray(sourceArray).slice(0, getRandomInt(1, sourceArray.length));
+};
+
+var shuffleTitleOptions = getShuffleArray(titleOptions);
+
 for (var i = 0; i < NEIGHBOUR_COUNT; i++) {
   neighbourAdvertisements[i] = {
     'author': {
       'avatar': 'img/avatars/user0' + (i + 1) + '.png'
     },
     'offer': {
-      'title': titleOptions[getRandomInt(0, titleOptions.length - 1)],
-      'address': getRandomInt(100, 600) + ', ' + getRandomInt(100, 600),
+      'title': shuffleTitleOptions[i],
+      'address': getRandomInt(100, 1200) + ', ' + getRandomInt(100, 750),
       'price': getRandomInt(1000, 1000000),
       'type': typeOptions[getRandomInt(0, typeOptions.length - 1)],
       'rooms': getRandomInt(1, 5),
-      'guests': getRandomInt(1, 100),
+      'guests': getRandomInt(1, 10),
       'checkin': '1' + getRandomInt(2, 4) + ':00',
       'checkout': '1' + getRandomInt(2, 4) + ':00',
-      'features': featureOptions[0],
+      'features': getShuffleArrayWithShuffleLength(featureOptions),
       'description': '',
-      'photos': photosOptions[0]
+      'photos': getShuffleArray(photosOptions)
     },
     'location': {
-      'x': locationXLimits[0],
-      'y': locationYLimits[0]
+      'x': getRandomInt(locationXLimits[0], locationXLimits[1]),
+      'y': getRandomInt(locationYLimits[0], locationYLimits[1])
     }
   };
 }
-
