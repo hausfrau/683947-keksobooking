@@ -10,6 +10,7 @@ var LOCATION_Y_LIMITS = [150, 500];
 var HIDDEN = 'hidden';
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
+var TAIL_HEIGHT = 22;
 var TYPES_SET = {
   'palace': 'Дворец',
   'flat': 'Квартира',
@@ -50,7 +51,7 @@ var initAddress = function () {
 };
 
 var updateAddress = function () {
-  address.value = (parseInt(mapPinMain.style.left, 10) + mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) + mapPinMainHeight / 2 + 22);
+  address.value = (parseInt(mapPinMain.style.left, 10) + mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) + mapPinMainHeight / 2 + TAIL_HEIGHT);
 };
 
 var closeButtonEscPressHandler = function (evt) {
