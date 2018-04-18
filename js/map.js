@@ -41,6 +41,7 @@ var timeoutSelect = adForm.querySelector('#timeout');
 var roomNumberSelect = adForm.querySelector('#room_number');
 var capacitySelect = adForm.querySelector('#capacity');
 var submitButton = document.querySelector('.ad-form__submit');
+var resetButton = document.querySelector('.ad-form__reset');
 
 var clearAdvertisements = function () {
   advertisements = [];
@@ -416,5 +417,11 @@ var validate = function (evt) {
 };
 
 submitButton.addEventListener('click', validate);
+
+var resetForm = function () {
+  activatePage(false);
+};
+
+resetButton.addEventListener('click', resetForm);
 
 activatePage(false);
