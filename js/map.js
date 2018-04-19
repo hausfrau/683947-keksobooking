@@ -24,6 +24,7 @@ var advertisements = [];
 var map = document.querySelector('.map');
 var mapPins = document.querySelector('.map__pins');
 var adForm = document.querySelector('.ad-form');
+var title = adForm.querySelector('#title');
 var mapFiltersContainer = document.querySelector('.map__filters-container');
 var mapPinMain = document.querySelector('.map__pin--main');
 var mapPinMainWidth = mapPinMain.querySelector('img').width;
@@ -42,6 +43,12 @@ var roomNumberSelect = adForm.querySelector('#room_number');
 var capacitySelect = adForm.querySelector('#capacity');
 var submitButton = document.querySelector('.ad-form__submit');
 var resetButton = document.querySelector('.ad-form__reset');
+
+var getRandomInt = function (min, max) {
+  var rand = min + Math.random() * (max + 1 - min);
+  rand = Math.floor(rand);
+  return rand;
+};
 
 var clearAdvertisements = function () {
   advertisements = [];
@@ -62,6 +69,11 @@ var showCard = function (flag) {
   }
 };
 
+var setPrice = function (price) {
+  priceInput.min = price;
+  priceInput.placeholder = price;
+};
+
 var clearFields = function () {
   var allInputs = adForm.querySelectorAll('input');
   for (var i = 0; i < allInputs.length; i++) {
@@ -72,8 +84,8 @@ var clearFields = function () {
       element.checked = false;
     }
   }
-  priceInput.placeholder = '1000';
   descriptionTextArea.value = '';
+  setPrice(1000);
 };
 
 var selectOption = function (element, value) {
@@ -93,6 +105,26 @@ var clearForm = function () {
   placeDefaultValues();
 };
 
+var initAddress = function () {
+  address.value = (parseInt(mapPinMain.style.left, 10) - mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) - mapPinMainHeight / 2);
+  address.readOnly = true;
+};
+
+var disableFieldsets = function (flag) {
+  var fieldsets = document.querySelectorAll('fieldset');
+  for (var i = 0; i < fieldsets.length; i++) {
+    fieldsets[i].disabled = flag;
+  }
+};
+
+var mapPinMainMouseUpHandler = function () {
+  activatePage(true);
+  generateData();
+  renderMapPins(document.querySelector('.map__pins'), advertisements);
+  updateAddress();
+  mapPinMain.removeEventListener('mouseup', mapPinMainMouseUpHandler);
+};
+
 var activatePage = function (activeState) {
   var MAP_FADED = 'map--faded';
   var AD_FORM_DISABLED = 'ad-form--disabled';
@@ -110,15 +142,17 @@ var activatePage = function (activeState) {
   mapPinMain.draggable = true;
   initAddress();
   disableFieldsets(!activeState);
-};
-
-var initAddress = function () {
-  address.value = (parseInt(mapPinMain.style.left, 10) - mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) - mapPinMainHeight / 2);
-  address.readOnly = true;
+  clearErrors();
+  mapPinMain.addEventListener('mouseup', mapPinMainMouseUpHandler);
 };
 
 var updateAddress = function () {
   address.value = (parseInt(mapPinMain.style.left, 10) + mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) + mapPinMainHeight / 2 + TAIL_HEIGHT);
+};
+
+var closeCard = function () {
+  mapCardElement.classList.add(HIDDEN);
+  document.removeEventListener('keydown', closeButtonEscPressHandler);
 };
 
 var closeButtonEscPressHandler = function (evt) {
@@ -127,14 +161,16 @@ var closeButtonEscPressHandler = function (evt) {
   }
 };
 
-var closeCard = function () {
-  mapCardElement.classList.add(HIDDEN);
-  document.removeEventListener('keydown', closeButtonEscPressHandler);
-};
-
 var openCard = function () {
   mapCardElement.classList.remove(HIDDEN);
   document.addEventListener('keydown', closeButtonEscPressHandler);
+};
+
+var renderCard = function (advertisement) {
+  openCard();
+  var fragment = document.createDocumentFragment();
+  fragment.appendChild(fillCard(advertisement));
+  map.insertBefore(fragment, mapFiltersContainer);
 };
 
 var mapPinsClickHandler = function (evt) {
@@ -172,29 +208,6 @@ mapPins.addEventListener('keydown', function (evt) {
     mapPinsClickHandler(evt);
   }
 });
-
-var mapPinMainMouseUpHandler = function () {
-  activatePage(true);
-  generateData();
-  renderMapPins(document.querySelector('.map__pins'), advertisements);
-  updateAddress();
-  mapPinMain.removeEventListener('mouseup', mapPinMainMouseUpHandler);
-};
-
-mapPinMain.addEventListener('mouseup', mapPinMainMouseUpHandler);
-
-var disableFieldsets = function (flag) {
-  var fieldsets = document.querySelectorAll('fieldset');
-  for (var i = 0; i < fieldsets.length; i++) {
-    fieldsets[i].disabled = flag;
-  }
-};
-
-var getRandomInt = function (min, max) {
-  var rand = min + Math.random() * (max + 1 - min);
-  rand = Math.floor(rand);
-  return rand;
-};
 
 var getShuffledArray = function (sourceArray) {
   var returnArray = sourceArray.slice(0, sourceArray.length);
@@ -328,43 +341,30 @@ var fillCard = function (advertisement) {
   return mapCardElement;
 };
 
-var renderCard = function (advertisement) {
-  openCard();
-  var fragment = document.createDocumentFragment();
-  fragment.appendChild(fillCard(advertisement));
-  map.insertBefore(fragment, mapFiltersContainer);
-};
-
-var setPrice = function (price) {
-  priceInput.min = price;
-  priceInput.placeholder = price;
-};
-
-var typeSelectClickHadler = function () {
-  var selectedPriceValue = typeSelect.options[typeSelect.selectedIndex].value;
-  if (selectedPriceValue === 'bungalo') {
-    setPrice('0');
-  } else if (selectedPriceValue === 'flat') {
-    setPrice('1000');
-  } else if (selectedPriceValue === 'house') {
-    setPrice('5000');
-  } else if (selectedPriceValue === 'palace') {
-    setPrice('10000');
+var verifyPrice = function () {
+  var typeSelectedValue = typeSelect.options[typeSelect.selectedIndex].value;
+  var price = 0;
+  switch (typeSelectedValue) {
+    case 'flat':
+      price = 1000;
+      break;
+    case 'house':
+      price = 5000;
+      break;
+    case 'palace':
+      price = 10000;
+      break;
   }
+  setPrice(price);
 };
-typeSelect.addEventListener('click', typeSelectClickHadler);
 
-var timeSelectClickHandler = function (evt) {
+var verifyTime = function (evt) {
   var sourceSelect = evt.target.id === 'timein' ? timeinSelect : timeoutSelect;
   var targetSelect = evt.target.id === 'timein' ? timeoutSelect : timeinSelect;
   targetSelect.value = sourceSelect.options[sourceSelect.selectedIndex].value;
 };
 
-timeinSelect.addEventListener('click', timeSelectClickHandler);
-
-timeoutSelect.addEventListener('click', timeSelectClickHandler);
-
-var roomNumberOrCapacityClickHandler = function () {
+var verifyCapacity = function () {
   var roomNumberSelectedValue = roomNumberSelect.options[roomNumberSelect.selectedIndex].value;
   var capacitySelectedValue = capacitySelect.options[capacitySelect.selectedIndex].value;
   if (roomNumberSelectedValue === '1' && capacitySelectedValue !== '1') {
@@ -380,9 +380,24 @@ var roomNumberOrCapacityClickHandler = function () {
   }
 };
 
-roomNumberSelect.addEventListener('click', roomNumberOrCapacityClickHandler);
+var selectsOnChangeHandler = function (evt) {
+  var nameElement = evt.target.name;
+  switch (nameElement) {
+    case 'type':
+      verifyPrice();
+      break;
+    case 'timein':
+    case 'timeout':
+      verifyTime(evt);
+      break;
+    case 'room_number':
+    case 'capacity':
+      verifyCapacity();
+      break;
+  }
+};
 
-capacitySelect.addEventListener('click', roomNumberOrCapacityClickHandler);
+adForm.addEventListener('change', selectsOnChangeHandler);
 
 var clearErrors = function () {
   var errorElements = adForm.querySelectorAll('.error');
@@ -393,6 +408,12 @@ var clearErrors = function () {
   }
 };
 
+var checkError = function (element) {
+  if (!element.validity.valid) {
+    element.classList.add(ERROR_CLASS);
+  }
+};
+
 var colorizeErrors = function () {
   var errorElements = adForm.querySelectorAll('.error');
   for (var i = 0; i < errorElements.length; i++) {
@@ -400,20 +421,12 @@ var colorizeErrors = function () {
   }
 };
 
-var validate = function (evt) {
-  evt.preventDefault();
+var validate = function () {
   clearErrors();
-  var returnValue = true;
-  var elements = adForm.elements;
-  for (var i = 0; i < elements.length; i++) {
-    var element = elements[i];
-    if (!element.validity.valid) {
-      element.classList.add(ERROR_CLASS);
-      returnValue = false;
-    }
-  }
+  checkError(title);
+  checkError(priceInput);
+  checkError(capacitySelect);
   colorizeErrors();
-  return returnValue;
 };
 
 submitButton.addEventListener('click', validate);
