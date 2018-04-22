@@ -204,7 +204,6 @@ var activatePage = function (activeState) {
   if (!activeState) {
     resetMapPinMain();
     mapPinMain.addEventListener('mousedown', mouseDownHandler);
-    document.addEventListener('mouseup', mouseUpHandler);
   }
 
   initAddress();
