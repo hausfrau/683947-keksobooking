@@ -1,10 +1,6 @@
 'use strict';
 
 (function () {
-  var NOERROR_COLOR = '1px solid #d9d9d3';
-  var ERROR_COLOR = '3px solid red';
-  var ERROR_CLASS = 'error';
-
   var mapPinMain = document.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
   var title = adForm.querySelector('#title');
@@ -28,10 +24,16 @@
 
     for (var i = 0; i < allInputs.length; i++) {
       var element = allInputs[i];
-      if (element.type === 'text' || element.type === 'file' || element.type === 'number') {
-        element.value = '';
-      } else if (element.type === 'checkbox') {
-        element.checked = false;
+
+      switch (element.type) {
+        case 'text':
+        case 'file':
+        case 'number':
+          element.value = '';
+          break;
+        case 'checkbox':
+          element.checked = false;
+          break;
       }
     }
     descriptionTextArea.value = '';
@@ -113,26 +115,12 @@
 
   adForm.addEventListener('change', selectsOnChangeHandler);
 
-  var checkError = function (element) {
-    if (!element.validity.valid) {
-      element.classList.add(ERROR_CLASS);
-    }
-  };
-
-  var colorizeErrors = function () {
-    var errorElements = adForm.querySelectorAll('.error');
-
-    for (var i = 0; i < errorElements.length; i++) {
-      errorElements[i].style.border = ERROR_COLOR;
-    }
-  };
-
   var validate = function () {
-    window.form.clearErrors();
-    checkError(title);
-    checkError(priceInput);
-    checkError(capacitySelect);
-    colorizeErrors();
+    window.error.clearErrors();
+    window.error.checkError(title);
+    window.error.checkError(priceInput);
+    window.error.checkError(capacitySelect);
+    window.error.colorizeErrors();
   };
 
   submitButton.addEventListener('click', validate);
@@ -146,15 +134,6 @@
   resetButton.addEventListener('click', resetForm);
 
   window.form = {
-    clearErrors: function () {
-      var errorElements = adForm.querySelectorAll('.error');
-
-      for (var i = 0; i < errorElements.length; i++) {
-        var element = errorElements[i];
-        element.style.border = NOERROR_COLOR;
-        element.classList.remove(ERROR_CLASS);
-      }
-    },
     clearForm: function () {
       clearFields();
       placeDefaultValues();

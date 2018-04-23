@@ -3,15 +3,11 @@
 (function () {
   var MAP_PIN_MAIN_X_LIMITS = [0, 1135];
   var MAP_PIN_MAIN_Y_LIMITS = [150, 625];
-  var TAIL_HEIGHT = 22;
 
   var map = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
   var mapPinMain = document.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
-  var address = document.querySelector('#address');
-  var mapPinMainWidth = mapPinMain.querySelector('img').width;
-  var mapPinMainHeight = mapPinMain.querySelector('img').height;
   var mapPinMainStartLeft = mapPinMain.style.left;
   var mapPinMainStartTop = mapPinMain.style.top;
   var startCoords = {};
@@ -33,16 +29,6 @@
     }
 
     parentElement.appendChild(fragment);
-  };
-
-
-  var initAddress = function () {
-    address.value = (parseInt(mapPinMain.style.left, 10) - mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) - mapPinMainHeight / 2);
-    address.readOnly = true;
-  };
-
-  var updateAddress = function () {
-    address.value = (parseInt(mapPinMain.style.left, 10) + mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) + mapPinMainHeight / 2 + TAIL_HEIGHT);
   };
 
   var enableMapAndForm = function (state) {
@@ -93,14 +79,14 @@
 
     mapPinMain.style.top = finalTop + 'px';
     mapPinMain.style.left = finalLeft + 'px';
-    updateAddress();
+    window.address.updateAddress();
   };
 
   var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault();
     window.map.activatePage(true);
     renderMapPins(document.querySelector('.map__pins'), window.data());
-    updateAddress();
+    window.address.updateAddress();
     document.removeEventListener('mousemove', mouseMoveHandler);
     document.removeEventListener('mouseup', mouseUpHandler);
   };
@@ -116,7 +102,7 @@
     index = element.dataset.index;
 
     if (isFinite(index)) {
-      window.card.renderCard(window.data()[index]);// advertisements[index]);
+      window.card.renderCard(window.data()[index]);
 
       var closeButton = window.card.mapCardElement.querySelector('.popup__close');
 
@@ -160,14 +146,14 @@
       clearAvatars();
       window.form.clearForm();
       window.form.disableFieldsets(!activeState);
-      window.form.clearErrors();
+      window.error.clearErrors();
 
       if (!activeState) {
         resetMapPinMain();
         mapPinMain.addEventListener('mousedown', window.map.mouseDownHandler);
       }
 
-      initAddress();
+      window.address.initAddress();
     }
   };
 
