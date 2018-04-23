@@ -1,10 +1,10 @@
 'use strict';
 
-window.util = (function () {
+(function () {
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
 
-  return {
+  window.util = {
     getRandomInt: function (min, max) {
       var rand = min + Math.random() * (max + 1 - min);
       rand = Math.floor(rand);
