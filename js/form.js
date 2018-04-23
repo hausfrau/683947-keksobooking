@@ -17,7 +17,7 @@
   var submitButton = document.querySelector('.ad-form__submit');
   var resetButton = document.querySelector('.ad-form__reset');
 
-  var checkError = function (element) {
+  var checkForError = function (element) {
     if (!element.validity.valid) {
       element.classList.add(ERROR_CLASS);
     }
@@ -61,7 +61,7 @@
     element.value = value;
   };
 
-  var placeDefaultValues = function () {
+  var setDefaultValues = function () {
     selectOption(typeSelect, 'flat');
     selectOption(timeinSelect, '12:00');
     selectOption(timeoutSelect, '12:00');
@@ -133,10 +133,10 @@
   adForm.addEventListener('change', selectsOnChangeHandler);
 
   var validate = function () {
-    window.form.clearErrors();
-    checkError(title);
-    checkError(priceInput);
-    checkError(capacitySelect);
+    clearErrors();
+    checkForError(title);
+    checkForError(priceInput);
+    checkForError(capacitySelect);
     colorizeErrors();
   };
 
@@ -149,21 +149,23 @@
 
   resetButton.addEventListener('click', resetForm);
 
-  window.form = {
-    clearErrors: function () {
-      var errorElements = adForm.querySelectorAll('.error');
+  var clearErrors = function () {
+    var errorElements = adForm.querySelectorAll('.error');
 
-      for (var i = 0; i < errorElements.length; i++) {
-        var element = errorElements[i];
-        element.style.border = NOERROR_COLOR;
-        element.classList.remove(ERROR_CLASS);
-      }
-    },
+    for (var i = 0; i < errorElements.length; i++) {
+      var element = errorElements[i];
+      element.style.border = NOERROR_COLOR;
+      element.classList.remove(ERROR_CLASS);
+    }
+  };
+
+  window.form = {
     clearForm: function () {
       clearFields();
-      placeDefaultValues();
+      setDefaultValues();
+      clearErrors();
     },
-    disableFieldsets: function (flag) {
+    toggleFieldsets: function (flag) {
       var fieldsets = document.querySelectorAll('fieldset');
 
       for (var i = 0; i < fieldsets.length; i++) {

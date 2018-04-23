@@ -35,7 +35,7 @@
       return returnArray;
     },
     getShuffleArrayWithRandomLength: function (sourceArray) {
-      return window.util.getShuffledArray(sourceArray).slice(0, window.util.getRandomInt(1, sourceArray.length));
+      return this.getShuffledArray(sourceArray).slice(0, this.getRandomInt(1, sourceArray.length));
     }
   };
 })();

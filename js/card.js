@@ -17,9 +17,9 @@
 
 
   var openCard = function () {
-    window.card.showCard(true);
+    showCard(true);
     document.addEventListener('keydown', function (evt) {
-      window.util.isEscEvent(evt, window.card.closeCard);
+      window.util.isEscEvent(evt, closeCard);
     });
   };
 
@@ -102,27 +102,33 @@
     return mapCardElement;
   };
 
-  window.card = {
-    showCard: function (flag) {
-      if (flag) {
-        mapCardElement.classList.remove(HIDDEN);
-      } else {
-        mapCardElement.classList.add(HIDDEN);
-      }
-    },
-    closeCard: function () {
-      window.card.showCard(false);
-      document.removeEventListener('keydown', function (evt) {
-        window.util.isEscEvent(evt, window.card.closeCard);
-      });
-    },
-    renderCard: function (advertisement) {
-      var fragment = document.createDocumentFragment();
+  var showCard = function (flag) {
+    if (flag) {
+      mapCardElement.classList.remove(HIDDEN);
+    } else {
+      mapCardElement.classList.add(HIDDEN);
+    }
+  };
 
-      openCard();
-      fragment.appendChild(fillCard(advertisement));
-      map.insertBefore(fragment, mapFiltersContainer);
-    },
+  var closeCard = function () {
+    showCard(false);
+    document.removeEventListener('keydown', function (evt) {
+      window.util.isEscEvent(evt, closeCard);
+    });
+  };
+
+  var renderCard = function (advertisement) {
+    var fragment = document.createDocumentFragment();
+
+    openCard();
+    fragment.appendChild(fillCard(advertisement));
+    map.insertBefore(fragment, mapFiltersContainer);
+  };
+
+  window.card = {
+    showCard: showCard,
+    closeCard: closeCard,
+    renderCard: renderCard,
     mapCardElement: mapCardElement
   };
 })();

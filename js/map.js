@@ -97,7 +97,7 @@
   var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault();
     window.map.activatePage(true);
-    renderMapPins(document.querySelector('.map__pins'), window.data());
+    renderMapPins(document.querySelector('.map__pins'), window.data);
     updateAddress();
     document.removeEventListener('mousemove', mouseMoveHandler);
     document.removeEventListener('mouseup', mouseUpHandler);
@@ -114,7 +114,7 @@
     index = element.dataset.index;
 
     if (isFinite(index)) {
-      window.card.renderCard(window.data()[index]);
+      window.card.renderCard(window.data[index]);
 
       var closeButton = window.card.mapCardElement.querySelector('.popup__close');
 
@@ -158,8 +158,7 @@
       enableMapAndForm(activeState);
       clearAvatars();
       window.form.clearForm();
-      window.form.disableFieldsets(!activeState);
-      window.form.clearErrors();
+      window.form.toggleFieldsets(!activeState);
 
       if (!activeState) {
         resetMapPinMain();

@@ -42,7 +42,5 @@
     };
   }
 
-  window.data = function () {
-    return advertisements;
-  };
+  window.data = advertisements;
 })();
