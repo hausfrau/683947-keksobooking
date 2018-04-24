@@ -14,14 +14,7 @@
   var template = document.querySelector('template');
   var mapCardTemplate = template.content.querySelector('.map__card');
   var mapCardElement = mapCardTemplate.cloneNode(true);
-
-
-  var openCard = function () {
-    showCard(true);
-    document.addEventListener('keydown', function (evt) {
-      window.util.isEscEvent(evt, closeCard);
-    });
-  };
+  var closeButton = mapCardElement.querySelector('.popup__close');
 
   var renderPopupPhoto = function (parentElement, photo) {
     var imgElement = parentElement.querySelector('img').cloneNode(true);
@@ -110,25 +103,46 @@
     }
   };
 
+  var closeButtonClickHandler = function () {
+    closeCard();
+  };
+
   var closeCard = function () {
     showCard(false);
+
     document.removeEventListener('keydown', function (evt) {
       window.util.isEscEvent(evt, closeCard);
     });
+    closeButton.removeEventListener('click', closeButtonClickHandler);
+    closeButton.removeEventListener('keydown', function (e) {
+      window.util.isEnterEvent(e, closeCard);
+    });
   };
 
-  var renderCard = function (advertisement) {
+  var openCard = function (advertisement) {
     var fragment = document.createDocumentFragment();
-
-    openCard();
     fragment.appendChild(fillCard(advertisement));
     map.insertBefore(fragment, mapFiltersContainer);
+
+    document.addEventListener('keydown', function (evt) {
+      window.util.isEscEvent(evt, closeCard);
+    });
+
+    if (closeButton !== null) {
+      closeButton.tabindex = '0';
+
+      closeButton.addEventListener('click', closeButtonClickHandler);
+
+      closeButton.addEventListener('keydown', function (e) {
+        window.util.isEnterEvent(e, closeCard);
+      });
+    }
+
+    showCard(true);
   };
 
   window.card = {
-    showCard: showCard,
-    closeCard: closeCard,
-    renderCard: renderCard,
-    mapCardElement: mapCardElement
+    openCard: openCard,
+    showCard: showCard
   };
 })();

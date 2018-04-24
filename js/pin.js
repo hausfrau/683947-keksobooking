@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  window.pin = function (advertisement, ind) { // renderAvatar
+  var createAvatar = function (advertisement, ind) {
     var template = document.querySelector('template');
     var mapPinTemplate = template.content.querySelector('.map__pin');
     var mapPinElement = mapPinTemplate.cloneNode(true);
@@ -14,5 +14,9 @@
     mapPinElement.dataset.index = ind;
 
     return mapPinElement;
+  };
+
+  window.pin = {
+    createAvatar: createAvatar
   };
 })();

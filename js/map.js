@@ -37,7 +37,7 @@
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < advertisementsArray.length; i++) {
-      fragment.appendChild(window.pin(advertisementsArray[i], i));
+      fragment.appendChild(window.pin.createAvatar(advertisementsArray[i], i));
     }
 
     parentElement.appendChild(fragment);
@@ -94,9 +94,22 @@
     updateAddress();
   };
 
+  var setActiveState = function (activeState) {
+    enableMapAndForm(activeState);
+    clearAvatars();
+    window.form.clearForm();
+    window.form.toggleFieldsets(!activeState);
+
+    if (!activeState) {
+      resetMapPinMain();
+    }
+
+    initAddress();
+  };
+
   var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault();
-    window.map.activatePage(true);
+    setActiveState(true);
     renderMapPins(document.querySelector('.map__pins'), window.data);
     updateAddress();
     document.removeEventListener('mousemove', mouseMoveHandler);
@@ -114,22 +127,7 @@
     index = element.dataset.index;
 
     if (isFinite(index)) {
-      window.card.renderCard(window.data[index]);
-
-      var closeButton = window.card.mapCardElement.querySelector('.popup__close');
-
-      if (closeButton !== null) {
-        closeButton.tabindex = '0';
-        var closeButtonClickHandler = function () {
-          window.card.closeCard();
-        };
-
-        closeButton.addEventListener('click', closeButtonClickHandler);
-
-        closeButton.addEventListener('keydown', function (e) {
-          window.util.isEnterEvent(e, window.card.closeCard);
-        });
-      }
+      window.card.openCard(window.data[index]);
     }
   };
 
@@ -154,21 +152,10 @@
   };
 
   window.map = {
-    activatePage: function (activeState) {
-      enableMapAndForm(activeState);
-      clearAvatars();
-      window.form.clearForm();
-      window.form.toggleFieldsets(!activeState);
-
-      if (!activeState) {
-        resetMapPinMain();
-      }
-
-      initAddress();
-    }
+    setActiveState: setActiveState
   };
 
-  window.map.activatePage(false);
+  setActiveState(false);
   mapPinMain.draggable = true;
   mapPinMain.addEventListener('mousedown', mouseDownHandler);
 })();

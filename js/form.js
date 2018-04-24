@@ -143,7 +143,7 @@
   submitButton.addEventListener('click', validate);
 
   var resetForm = function () {
-    window.map.activatePage(false);
+    window.map.setActiveState(false);
     window.card.showCard(false);
   };
 
