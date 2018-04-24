@@ -144,7 +144,7 @@
 
   var resetForm = function () {
     window.map.setActiveState(false);
-    window.card.showCard(false);
+    window.card.toggleCardVisibility(false);
   };
 
   resetButton.addEventListener('click', resetForm);

@@ -25,7 +25,7 @@
     address.value = (parseInt(mapPinMain.style.left, 10) + mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) + mapPinMainHeight / 2 + TAIL_HEIGHT);
   };
 
-  var clearAvatars = function () {
+  var clearPins = function () {
     var allmapPins = mapPins.querySelectorAll('.map__pin:not(.map__pin--main)');
 
     for (var i = 0; i < allmapPins.length; i++) {
@@ -37,7 +37,7 @@
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < advertisementsArray.length; i++) {
-      fragment.appendChild(window.pin.createAvatar(advertisementsArray[i], i));
+      fragment.appendChild(window.pin.createPin(advertisementsArray[i], i));
     }
 
     parentElement.appendChild(fragment);
@@ -96,7 +96,7 @@
 
   var setActiveState = function (activeState) {
     enableMapAndForm(activeState);
-    clearAvatars();
+    clearPins();
     window.form.clearForm();
     window.form.toggleFieldsets(!activeState);
 

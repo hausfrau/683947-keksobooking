@@ -95,7 +95,7 @@
     return mapCardElement;
   };
 
-  var showCard = function (flag) {
+  var toggleCardVisibility = function (flag) {
     if (flag) {
       mapCardElement.classList.remove(HIDDEN);
     } else {
@@ -108,7 +108,7 @@
   };
 
   var closeCard = function () {
-    showCard(false);
+    toggleCardVisibility(false);
 
     document.removeEventListener('keydown', function (evt) {
       window.util.isEscEvent(evt, closeCard);
@@ -138,11 +138,11 @@
       });
     }
 
-    showCard(true);
+    toggleCardVisibility(true);
   };
 
   window.card = {
     openCard: openCard,
-    showCard: showCard
+    toggleCardVisibility: toggleCardVisibility
   };
 })();
