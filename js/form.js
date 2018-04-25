@@ -16,6 +16,7 @@
   var capacitySelect = adForm.querySelector('#capacity');
   var submitButton = document.querySelector('.ad-form__submit');
   var resetButton = document.querySelector('.ad-form__reset');
+  var success = document.querySelector('.success');
 
   var checkForError = function (element) {
     if (!element.validity.valid) {
@@ -131,6 +132,20 @@
   };
 
   adForm.addEventListener('change', selectsOnChangeHandler);
+  adForm.addEventListener('submit', function (evt) {
+    window.upload(new FormData(adForm), function (response) {
+      if (response !== null) {
+        clearForm();
+      }
+    },
+    function (errorMessage) {
+      success.classList.remove('hidden');
+      var mes = success.querySelector('.success__message');
+      mes.insertAdjacentHTML(errorMessage);
+      clearForm();
+    });
+    evt.preventDefault();
+  });
 
   var validate = function () {
     clearErrors();
@@ -159,12 +174,14 @@
     }
   };
 
+  var clearForm = function () {
+    clearFields();
+    setDefaultValues();
+    clearErrors();
+  };
+
   window.form = {
-    clearForm: function () {
-      clearFields();
-      setDefaultValues();
-      clearErrors();
-    },
+    clearForm: clearForm,
     toggleFieldsets: function (flag) {
       var fieldsets = document.querySelectorAll('fieldset');
 

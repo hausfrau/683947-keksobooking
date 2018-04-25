@@ -14,30 +14,34 @@
   var template = document.querySelector('template');
   var mapCardTemplate = template.content.querySelector('.map__card');
   var mapCardElement = mapCardTemplate.cloneNode(true);
+  var imgElement = mapCardElement.querySelector('.popup__avatar');
+  var popupPhotosElement = mapCardElement.querySelector('.popup__photos');
   var closeButton = mapCardElement.querySelector('.popup__close');
 
   var renderPopupPhoto = function (parentElement, photo) {
-    var imgElement = parentElement.querySelector('img').cloneNode(true);
+    var imgEl = parentElement.querySelector('img').cloneNode(true);
 
-    imgElement.src = photo;
-    imgElement.classList.remove(HIDDEN);
+    imgEl.src = photo;
+    imgEl.classList.remove(HIDDEN);
 
-    return imgElement;
+    return imgEl;
   };
 
   var renderPopupPhotos = function (parentElement, photos) {
-    var fragment = document.createDocumentFragment();
     var allImgs = parentElement.querySelectorAll('img:not(.hidden)');
 
     for (i = 0; i < allImgs.length; i++) {
       parentElement.removeChild(allImgs[i]);
     }
 
-    for (var i = 0; i < photos.length; i++) {
-      fragment.appendChild(renderPopupPhoto(parentElement, photos[i]));
-    }
+    if (photos.length > 0) {
+      var fragment = document.createDocumentFragment();
+      for (var i = 0; i < photos.length; i++) {
+        fragment.appendChild(renderPopupPhoto(parentElement, photos[i]));
+      }
 
-    parentElement.appendChild(fragment);
+      parentElement.appendChild(fragment);
+    }
   };
 
   var renderPopupFeature = function (feature) {
@@ -50,46 +54,122 @@
   };
 
   var renderPopupFeatures = function (parentElement, features) {
-    var fragment = document.createDocumentFragment();
-    var ulElement = document.createElement('ul');
+    if (features.length > 0) {
+      var fragment = document.createDocumentFragment();
+      var ulElement = document.createElement('ul');
+      ulElement.className = 'popup__features';
 
-    parentElement.removeChild(parentElement.querySelector('.popup__features'));
-    ulElement.className = 'popup__features';
+      for (var i = 0; i < features.length; i++) {
+        fragment.appendChild(renderPopupFeature(features[i]));
+      }
 
-    for (var i = 0; i < features.length; i++) {
-      fragment.appendChild(renderPopupFeature(features[i]));
+      ulElement.appendChild(fragment);
+      parentElement.appendChild(ulElement);
     }
+  };
 
-    ulElement.appendChild(fragment);
-    parentElement.appendChild(ulElement);
+  var clearPhotos = function () {
+    var allImgs = popupPhotosElement.querySelectorAll('img');
+
+    for (var i = 1; i < allImgs.length; i++) {
+      popupPhotosElement.removeChild(allImgs[i]);
+    }
+  };
+
+  var clearCard = function () {
+    imgElement.src = '';
+    imgElement.alt = '';
+    mapCardElement.querySelector('.popup__title').textContent = '';
+    mapCardElement.querySelector('.popup__text--address').textContent = '';
+    mapCardElement.querySelector('.popup__text--price').innerHTML = '';
+    mapCardElement.querySelector('.popup__type').textContent = '';
+    mapCardElement.querySelector('.popup__text--capacity').textContent = '';
+    mapCardElement.querySelector('.popup__text--time').textContent = '';
+    var features = mapCardElement.querySelector('.popup__features');
+    if (features !== null) {
+      mapCardElement.removeChild(features);
+    }
+    mapCardElement.querySelector('.popup__description').textContent = '';
+    clearPhotos();
   };
 
   var fillCard = function (advertisement) {
-    var imgElement = mapCardElement.querySelector('.popup__avatar');
-    var popupPhotosElement = mapCardElement.querySelector('.popup__photos');
+    window.util.removeClass(mapCardElement, 'hidden');
+
+    clearCard();
 
     popupPhotosElement.querySelector('img').classList.add(HIDDEN);
+
+    imgElement.src = advertisement.author.avatar;
+
+    var dataElement = advertisement.offer.title;
+    var cardElement = mapCardElement.querySelector('.popup__title');
+    if (dataElement === 'undefined' || dataElement.trim().length === 0) {
+      imgElement.alt = '';
+      cardElement.classList.add(HIDDEN);
+    } else {
+      imgElement.alt = dataElement;
+      cardElement.textContent = dataElement;
+    }
+
+    dataElement = advertisement.offer.address;
+    cardElement = mapCardElement.querySelector('.popup__text--address');
+    if (dataElement === 'undefined' || dataElement.trim().length === 0) {
+      cardElement.classList.add(HIDDEN);
+    } else {
+      cardElement.textContent = dataElement;
+    }
+
+    dataElement = advertisement.offer.price;
+    cardElement = mapCardElement.querySelector('.popup__text--price');
+    if (dataElement === 'undefined' || dataElement === 0) {
+      cardElement.classList.add(HIDDEN);
+    } else {
+      cardElement.innerHTML = dataElement + '&#x20bd;<span>/ночь</span>';
+    }
+
+    dataElement = advertisement.offer.type;
+    cardElement = mapCardElement.querySelector('.popup__type');
+    if (dataElement === 'undefined' || dataElement.trim().length === 0) {
+      cardElement.classList.add(HIDDEN);
+    } else {
+      cardElement.textContent = TYPES_SET[dataElement];
+    }
 
     var offerRooms = advertisement.offer.rooms;
     var offerRoomsStringEnd = ' комнат';
     var offerGuestsCount = advertisement.offer.guests;
-
-    if (offerRooms === 1) {
-      offerRoomsStringEnd += 'а';
-    } else if (offerRooms !== 5) {
-      offerRoomsStringEnd += 'ы';
+    cardElement = mapCardElement.querySelector('.popup__text--capacity');
+    if (offerRooms === 'undefined' || offerRooms === 0 || offerGuestsCount === 'undefined' || offerGuestsCount === 0) {
+      cardElement.classList.add(HIDDEN);
+    } else {
+      if (offerRooms === 1) {
+        offerRoomsStringEnd += 'а';
+      } else if (offerRooms !== 5) {
+        offerRoomsStringEnd += 'ы';
+      }
+      cardElement.textContent = offerRooms + offerRoomsStringEnd + ' для ' + offerGuestsCount + (offerGuestsCount === 1 ? ' гостя' : ' гостей');
     }
 
-    imgElement.src = advertisement.author.avatar;
-    imgElement.alt = advertisement.offer.title;
-    mapCardElement.querySelector('.popup__title').textContent = advertisement.offer.title;
-    mapCardElement.querySelector('.popup__text--address').textContent = advertisement.offer.address;
-    mapCardElement.querySelector('.popup__text--price').innerHTML = advertisement.offer.price + '&#x20bd;<span>/ночь</span>';
-    mapCardElement.querySelector('.popup__type').textContent = TYPES_SET[advertisement.offer.type];
-    mapCardElement.querySelector('.popup__text--capacity').textContent = offerRooms + offerRoomsStringEnd + ' для ' + offerGuestsCount + (offerGuestsCount === 1 ? ' гостя' : ' гостей');
-    mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advertisement.offer.checkin + ', выезд до ' + advertisement.offer.checkout;
+    var checkin = advertisement.offer.checkin;
+    var checkout = advertisement.offer.checkout;
+    cardElement = mapCardElement.querySelector('.popup__text--time');
+    if (checkin === 'undefined' || checkin.trim().length === 0 || checkin.trim() === '0:00' || checkout === 'undefined' || checkout.trim().length === 0 || checkout.trim() === '0:00') {
+      cardElement.classList.add(HIDDEN);
+    } else {
+      cardElement.textContent = 'Заезд после ' + checkin + ', выезд до ' + checkout;
+    }
+
     renderPopupFeatures(mapCardElement, advertisement.offer.features);
-    mapCardElement.querySelector('.popup__description').textContent = advertisement.offer.description;
+
+    dataElement = advertisement.offer.description;
+    cardElement = mapCardElement.querySelector('.popup__description');
+    if (dataElement === 'undefined' || dataElement.trim().length === 0) {
+      cardElement.classList.add(HIDDEN);
+    } else {
+      cardElement.textContent = dataElement;
+    }
+
     renderPopupPhotos(popupPhotosElement, advertisement.offer.photos);
 
     return mapCardElement;

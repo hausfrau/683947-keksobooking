@@ -37,7 +37,8 @@
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < advertisementsArray.length; i++) {
-      fragment.appendChild(window.pin.createPin(advertisementsArray[i], i));
+      var advertisement = advertisementsArray[i];
+      fragment.appendChild(window.pin.createPin(advertisement, i));
     }
 
     parentElement.appendChild(fragment);
@@ -125,6 +126,8 @@
     }
 
     index = element.dataset.index;
+
+    window.card.toggleCardVisibility(false);
 
     if (isFinite(index)) {
       window.card.openCard(window.data[index]);
