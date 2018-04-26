@@ -93,6 +93,14 @@
     clearPhotos();
   };
 
+  var checkForTextPresence = function (dataElement, cardElement) {
+    if (dataElement === 'undefined' || dataElement.trim().length === 0) {
+      cardElement.classList.add(HIDDEN);
+    } else {
+      cardElement.textContent = dataElement;
+    }
+  };
+
   var fillCard = function (advertisement) {
     window.util.removeClass(mapCardElement, 'hidden');
 
@@ -112,13 +120,7 @@
       cardElement.textContent = dataElement;
     }
 
-    dataElement = advertisement.offer.address;
-    cardElement = mapCardElement.querySelector('.popup__text--address');
-    if (dataElement === 'undefined' || dataElement.trim().length === 0) {
-      cardElement.classList.add(HIDDEN);
-    } else {
-      cardElement.textContent = dataElement;
-    }
+    checkForTextPresence(advertisement.offer.address, mapCardElement.querySelector('.popup__text--address'));
 
     dataElement = advertisement.offer.price;
     cardElement = mapCardElement.querySelector('.popup__text--price');
@@ -162,13 +164,7 @@
 
     renderPopupFeatures(mapCardElement, advertisement.offer.features);
 
-    dataElement = advertisement.offer.description;
-    cardElement = mapCardElement.querySelector('.popup__description');
-    if (dataElement === 'undefined' || dataElement.trim().length === 0) {
-      cardElement.classList.add(HIDDEN);
-    } else {
-      cardElement.textContent = dataElement;
-    }
+    checkForTextPresence(advertisement.offer.description, mapCardElement.querySelector('.popup__description'));
 
     renderPopupPhotos(popupPhotosElement, advertisement.offer.photos);
 
