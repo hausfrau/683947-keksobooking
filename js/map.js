@@ -118,7 +118,7 @@
     setActiveState(true);
 
     if (!isPinsRendered()) {
-      renderMapPins(document.querySelector('.map__pins'), window.data.getData());
+      renderMapPins(document.querySelector('.map__pins'), window.data.advertisements);
     }
     updateAddress();
     document.removeEventListener('mousemove', mouseMoveHandler);
@@ -138,7 +138,7 @@
     window.card.toggleCardVisibility(false);
 
     if (isFinite(index)) {
-      window.card.openCard(window.data.getData()[index]);
+      window.card.openCard(window.data.advertisements[index]);
     }
   };
 
@@ -149,7 +149,7 @@
   });
 
   var errorHandler = function (errorMessage) {
-    window.util.showSuccess(false, '', errorMessage);
+    window.util.showError(errorMessage, 10000);
   };
 
   var successHandler = function (response) {

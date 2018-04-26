@@ -32,17 +32,13 @@
     }
   };
 
-  var getData = function () {
-    return advertisements;
-  };
-
   var isDataLoaded = function () {
     return advertisements.length !== 0;
   };
 
   window.data = {
     setData: setData,
-    getData: getData,
+    advertisements: advertisements,
     isDataLoaded: isDataLoaded
   };
 })();

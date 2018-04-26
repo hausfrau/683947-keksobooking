@@ -4,7 +4,6 @@
   var ERROR_COLOR = '3px solid red';
   var NOERROR_COLOR = '1px solid #d9d9d3';
   var ERROR_CLASS = 'error';
-  var SUCCESS_MESSAGE = 'Ваше объявление \nуспешно размещено!';
 
   var adForm = document.querySelector('.ad-form');
   var title = adForm.querySelector('#title');
@@ -136,12 +135,12 @@
   adForm.addEventListener('submit', function (evt) {
     window.backend.upload(new FormData(adForm), function (response) {
       if (response !== null) {
-        window.util.showSuccess(true, SUCCESS_MESSAGE, '');
+        window.util.showSuccess();
         resetForm();
       }
     },
     function (errorMessage) {
-      window.util.showSuccess(false, '', errorMessage);
+      window.util.createErrorMessage(errorMessage);
     });
     evt.preventDefault();
   });

@@ -5,7 +5,32 @@
   var ENTER_KEYCODE = 13;
 
   var success = document.querySelector('.success');
-  var successMessage = success.querySelector('.success__message');
+  var err;
+
+  var createErrorMessage = function (message) {
+    err = document.createElement('div');
+    var p = document.createElement('p');
+    p.textContent = message;
+    p.style.fontSize = '30px';
+    p.style.textAlign = 'center';
+    p.style.verticalAlign = 'middle';
+    err.style.position = 'absolute';
+    err.style.width = '700px';
+    err.style.height = '200px';
+    err.style.left = 0;
+    err.style.top = 0;
+    err.style.right = 0;
+    err.style.bottom = 0;
+    err.style.margin = 'auto';
+    err.style.backgroundColor = '#afeeee';
+    err.style.border = 'px solid #D4D4D4';
+    err.style.borderRadius = '10px';
+    err.style.boxShadow = '0 0 80px black';
+    err.style.opacity = 0.9;
+    err.style.zIndex = 100;
+    err.appendChild(p);
+    document.body.insertAdjacentElement('afterbegin', err);
+  };
 
   window.util = {
     isEscEvent: function (evt, action) {
@@ -25,21 +50,18 @@
         childElements[i].classList.remove(className);
       }
     },
-    showSuccess: function (isOK, okMessage, errorMessage) {
-      successMessage.textContent = isOK ? okMessage : errorMessage;
+    showSuccess: function () {
       success.classList.remove('hidden');
       setTimeout(function () {
         success.classList.add('hidden');
-        successMessage.textContent = '';
       }, 3000);
     },
-    showPreloader: function (flag, message) {
-      if (flag) {
-        success.classList.remove('hidden');
-        successMessage.textContent = message;
-      } else {
-        success.classList.add('hidden');
-        successMessage.textContent = '';
+    showError: function (message, removeTimeout) {
+      createErrorMessage(message);
+      if (removeTimeout) {
+        setTimeout(function () {
+          document.body.removeChild(err);
+        }, removeTimeout);
       }
     }
   };
