@@ -3,18 +3,46 @@
 (function () {
 
   var advertisements = [];
-  var success = document.querySelector('.success');
 
-  var errorHandler = function (errorMessage) {
-    success.classList.remove('hidden');
-    var mes = success.querySelector('.success__message');
-    mes.insertAdjacentHTML(errorMessage);
+  var setData = function (response) {
+    for (var i = 0; i < response.length; i++) {
+      var advertisement = response[i];
+      advertisements[i] = {
+        'author': {
+          'avatar': advertisement.author.avatar
+        },
+        'offer': {
+          'title': advertisement.offer.title,
+          'address': advertisement.offer.address,
+          'price': advertisement.offer.price,
+          'type': advertisement.offer.type,
+          'rooms': advertisement.offer.rooms,
+          'guests': advertisement.offer.guests,
+          'checkin': advertisement.offer.checkin,
+          'checkout': advertisement.offer.checkout,
+          'features': advertisement.offer.features,
+          'description': advertisement.offer.description,
+          'photos': advertisement.offer.photos
+        },
+        'location': {
+          'x': advertisement.location.x,
+          'y': advertisement.location.y
+        }
+      };
+    }
   };
 
-  var successHandler = function (advertisementsArray) {
-    advertisements = advertisementsArray;
-    window.data = advertisements;
+  var getData = function () {
+    return advertisements;
   };
 
-  window.load(successHandler, errorHandler);
+  var isDataLoaded = function () {
+    return advertisements.length !== 0;
+  };
+
+  window.data = {
+    setData: setData,
+    getData: getData,
+    isDataLoaded: isDataLoaded
+  };
 })();

@@ -97,21 +97,29 @@
 
   var setActiveState = function (activeState) {
     enableMapAndForm(activeState);
-    clearPins();
     window.form.clearForm();
     window.form.toggleFieldsets(!activeState);
 
     if (!activeState) {
+      clearPins();
       resetMapPinMain();
     }
 
     initAddress();
   };
 
+  var isPinsRendered = function () {
+    return mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').length !== 0;
+
+  };
+
   var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault();
     setActiveState(true);
-    renderMapPins(document.querySelector('.map__pins'), window.data);
+
+    if (!isPinsRendered()) {
+      renderMapPins(document.querySelector('.map__pins'), window.data.getData());
+    }
     updateAddress();
     document.removeEventListener('mousemove', mouseMoveHandler);
     document.removeEventListener('mouseup', mouseUpHandler);
@@ -130,7 +138,7 @@
     window.card.toggleCardVisibility(false);
 
     if (isFinite(index)) {
-      window.card.openCard(window.data[index]);
+      window.card.openCard(window.data.getData()[index]);
     }
   };
 
@@ -140,10 +148,22 @@
     window.util.isEnterEvent(evt, mapPinsClickHandler);
   });
 
+  var errorHandler = function (errorMessage) {
+    window.util.showSuccess(false, '', errorMessage);
+  };
+
+  var successHandler = function (response) {
+    window.data.setData(response);
+  };
+
   var mouseDownHandler = function (evt) {
     evt.preventDefault();
 
     enableMapAndForm(true);
+
+    if (!window.data.isDataLoaded()) {
+      window.backend.load(successHandler, errorHandler);
+    }
 
     startCoords = {
       x: evt.clientX,
