@@ -17,7 +17,6 @@
   var submitButton = document.querySelector('.ad-form__submit');
   var resetButton = document.querySelector('.ad-form__reset');
 
-
   var checkForError = function (element) {
     if (!element.validity.valid) {
       element.classList.add(ERROR_CLASS);

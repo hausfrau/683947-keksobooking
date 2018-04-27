@@ -15,6 +15,8 @@
   var mapPinMainWidth = mapPinMain.querySelector('img').width;
   var mapPinMainHeight = mapPinMain.querySelector('img').height;
   var startCoords = {};
+  var isPinsRendered = false;
+  var mouseUp = false;
 
   var initAddress = function () {
     address.value = (parseInt(mapPinMain.style.left, 10) - mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) - mapPinMainHeight / 2);
@@ -31,9 +33,14 @@
     for (var i = 0; i < allmapPins.length; i++) {
       mapPins.removeChild(allmapPins[i]);
     }
+    isPinsRendered = false;
   };
 
   var renderMapPins = function (parentElement, advertisementsArray) {
+    if (!advertisementsArray.length) {
+      return;
+    }
+
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < advertisementsArray.length; i++) {
@@ -42,6 +49,7 @@
     }
 
     parentElement.appendChild(fragment);
+    isPinsRendered = true;
   };
 
   var enableMapAndForm = function (state) {
@@ -108,21 +116,16 @@
     initAddress();
   };
 
-  var isPinsRendered = function () {
-    return mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').length !== 0;
-
-  };
-
   var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault();
     setActiveState(true);
-
-    if (!isPinsRendered()) {
+    if (!isPinsRendered) {
       renderMapPins(document.querySelector('.map__pins'), window.data.advertisements);
     }
     updateAddress();
     document.removeEventListener('mousemove', mouseMoveHandler);
     document.removeEventListener('mouseup', mouseUpHandler);
+    mouseUp = true;
   };
 
   var mapPinsClickHandler = function (evt) {
@@ -154,6 +157,11 @@
 
   var successHandler = function (response) {
     window.data.setData(response);
+
+    if (mouseUp) {
+      renderMapPins(document.querySelector('.map__pins'), window.data.advertisements);
+      mouseUp = false;
+    }
   };
 
   var mouseDownHandler = function (evt) {

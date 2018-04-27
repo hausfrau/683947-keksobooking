@@ -4,32 +4,31 @@
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
 
-  var success = document.querySelector('.success');
-  var err;
+  var successElement = document.querySelector('.success');
 
   var createErrorMessage = function (message) {
-    err = document.createElement('div');
-    var p = document.createElement('p');
-    p.textContent = message;
-    p.style.fontSize = '30px';
-    p.style.textAlign = 'center';
-    p.style.verticalAlign = 'middle';
-    err.style.position = 'absolute';
-    err.style.width = '700px';
-    err.style.height = '200px';
-    err.style.left = 0;
-    err.style.top = 0;
-    err.style.right = 0;
-    err.style.bottom = 0;
-    err.style.margin = 'auto';
-    err.style.backgroundColor = '#afeeee';
-    err.style.border = 'px solid #D4D4D4';
-    err.style.borderRadius = '10px';
-    err.style.boxShadow = '0 0 80px black';
-    err.style.opacity = 0.9;
-    err.style.zIndex = 100;
-    err.appendChild(p);
-    document.body.insertAdjacentElement('afterbegin', err);
+    var errorElement = document.createElement('div');
+    var errorText = document.createElement('p');
+    errorText.textContent = message;
+    errorText.style.fontSize = '30px';
+    errorText.style.textAlign = 'center';
+    errorElement.style.position = 'absolute';
+    errorElement.style.width = '700px';
+    errorElement.style.height = '100px';
+    errorElement.style.left = 0;
+    errorElement.style.top = 0;
+    errorElement.style.right = 0;
+    errorElement.style.bottom = 0;
+    errorElement.style.margin = 'auto';
+    errorElement.style.backgroundColor = '#ff7f50';
+    errorElement.style.border = 'px solid #d4d4d4';
+    errorElement.style.borderRadius = '10px';
+    errorElement.style.boxShadow = '0 0 80px black';
+    errorElement.style.opacity = 0.9;
+    errorElement.style.zIndex = 100;
+    errorElement.appendChild(errorText);
+    document.body.insertAdjacentElement('afterbegin', errorElement);
+    return errorElement;
   };
 
   window.util = {
@@ -51,16 +50,16 @@
       }
     },
     showSuccess: function () {
-      success.classList.remove('hidden');
+      successElement.classList.remove('hidden');
       setTimeout(function () {
-        success.classList.add('hidden');
+        successElement.classList.add('hidden');
       }, 3000);
     },
     showError: function (message, removeTimeout) {
-      createErrorMessage(message);
+      var errorElem = createErrorMessage(message);
       if (removeTimeout) {
         setTimeout(function () {
-          document.body.removeChild(err);
+          document.body.removeChild(errorElem);
         }, removeTimeout);
       }
     }
