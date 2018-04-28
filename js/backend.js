@@ -8,6 +8,7 @@
   var isDataLoading = false;
 
   var load = function (onLoad, onError) {
+    window.data.isDataLoading = true;
 
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -16,6 +17,7 @@
       var error;
       switch (xhr.status) {
         case 200:
+          window.data.isDataLoading = false;
           onLoad(xhr.response);
           break;
         case 400:

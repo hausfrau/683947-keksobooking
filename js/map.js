@@ -170,7 +170,6 @@
     enableMapAndForm(true);
 
     if (!window.data.isDataLoaded() && !window.data.isDataLoading) {
-      window.data.isDataLoading = true;
       window.backend.load(successHandler, errorHandler);
     }
 
