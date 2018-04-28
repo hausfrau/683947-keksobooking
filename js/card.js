@@ -2,6 +2,8 @@
 
 (function () {
   var HIDDEN = 'hidden';
+  var POPUP_FEATURE = 'popup__feature';
+  var POPUP_FEATURES = 'popup__features';
   var TYPES_SET = {
     'palace': 'Дворец',
     'flat': 'Квартира',
@@ -54,8 +56,8 @@
   var renderPopupFeature = function (feature) {
     var liElement = document.createElement('li');
 
-    liElement.classList.add('popup__feature');
-    liElement.classList.add('popup__feature--' + feature);
+    liElement.classList.add(POPUP_FEATURE);
+    liElement.classList.add(POPUP_FEATURE + '--' + feature);
 
     return liElement;
   };
@@ -65,7 +67,7 @@
     if (featuresArrayLength > 0) {
       var fragment = document.createDocumentFragment();
       var ulElement = document.createElement('ul');
-      ulElement.className = 'popup__features';
+      ulElement.className = POPUP_FEATURES;
 
       for (var i = 0; i < featuresArrayLength; i++) {
         fragment.appendChild(renderPopupFeature(featuresArray[i]));
@@ -85,7 +87,7 @@
   };
 
   var clearCard = function () {
-    var features = mapCardElement.querySelector('.popup__features');
+    var features = mapCardElement.querySelector('.' + POPUP_FEATURES);
 
     imgElement.src = '';
     imgElement.alt = '';
@@ -103,7 +105,7 @@
   };
 
   var fillCard = function (advertisement) {
-    window.util.removeClass(mapCardElement, 'hidden');
+    window.util.removeClass(mapCardElement, HIDDEN);
 
     clearCard();
 
@@ -157,10 +159,10 @@
 
     var checkin = advertisement.offer.checkin;
     var checkout = advertisement.offer.checkout;
-    if (checkin === '0:00' || checkout === '0:00') {
-      timeElement.classList.add(HIDDEN);
-    } else {
+    if (checkin && checkout && checkin !== '0:00' && checkout !== '0:00') {
       timeElement.textContent = 'Заезд после ' + checkin + ', выезд до ' + checkout;
+    } else {
+      timeElement.classList.add(HIDDEN);
     }
 
     renderPopupFeatures(mapCardElement, advertisement.offer.features);

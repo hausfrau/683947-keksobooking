@@ -5,6 +5,8 @@
   var LOAD_URL = 'https://js.dump.academy/keksobooking/data';
   var UPLOAD_URL = 'https://js.dump.academy/keksobooking';
 
+  var isDataLoading = false;
+
   var load = function (onLoad, onError) {
 
     var xhr = new XMLHttpRequest();
@@ -60,6 +62,7 @@
 
   window.backend = {
     load: load,
-    upload: upload
+    upload: upload,
+    isDataLoading: isDataLoading
   };
 })();

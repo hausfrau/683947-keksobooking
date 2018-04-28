@@ -1,8 +1,11 @@
 'use strict';
 
 (function () {
+  var HIDDEN = 'hidden';
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
+  var ERROR_TIMEOUT = 10000;
+  var SUCCESS_TIMEOUT = 3000;
 
   var successElement = document.querySelector('.success');
 
@@ -50,18 +53,16 @@
       }
     },
     showSuccess: function () {
-      successElement.classList.remove('hidden');
+      successElement.classList.remove(HIDDEN);
       setTimeout(function () {
-        successElement.classList.add('hidden');
-      }, 3000);
+        successElement.classList.add(HIDDEN);
+      }, SUCCESS_TIMEOUT);
     },
-    showError: function (message, removeTimeout) {
+    showError: function (message) {
       var errorElem = createErrorMessage(message);
-      if (removeTimeout) {
-        setTimeout(function () {
-          document.body.removeChild(errorElem);
-        }, removeTimeout);
-      }
+      setTimeout(function () {
+        document.body.removeChild(errorElem);
+      }, ERROR_TIMEOUT);
     }
   };
 })();

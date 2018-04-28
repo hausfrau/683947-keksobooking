@@ -152,7 +152,7 @@
   });
 
   var errorHandler = function (errorMessage) {
-    window.util.showError(errorMessage, 10000);
+    window.util.showError(errorMessage);
   };
 
   var successHandler = function (response) {
@@ -169,7 +169,8 @@
 
     enableMapAndForm(true);
 
-    if (!window.data.isDataLoaded()) {
+    if (!window.data.isDataLoaded() && !window.data.isDataLoading) {
+      window.data.isDataLoading = true;
       window.backend.load(successHandler, errorHandler);
     }
 

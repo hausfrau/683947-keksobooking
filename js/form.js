@@ -24,7 +24,7 @@
   };
 
   var colorizeErrors = function () {
-    var errorElements = adForm.querySelectorAll('.error');
+    var errorElements = adForm.querySelectorAll('.' + ERROR_CLASS);
 
     for (var i = 0; i < errorElements.length; i++) {
       errorElements[i].style.border = ERROR_COLOR;
@@ -162,7 +162,7 @@
   resetButton.addEventListener('click', resetForm);
 
   var clearErrors = function () {
-    var errorElements = adForm.querySelectorAll('.error');
+    var errorElements = adForm.querySelectorAll('.' + ERROR_CLASS);
 
     for (var i = 0; i < errorElements.length; i++) {
       var element = errorElements[i];
