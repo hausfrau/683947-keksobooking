@@ -24,7 +24,7 @@
   };
 
   var colorizeErrors = function () {
-    var errorElements = adForm.querySelectorAll('.error');
+    var errorElements = adForm.querySelectorAll('.' + ERROR_CLASS);
 
     for (var i = 0; i < errorElements.length; i++) {
       errorElements[i].style.border = ERROR_COLOR;
@@ -131,6 +131,18 @@
   };
 
   adForm.addEventListener('change', selectsOnChangeHandler);
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.upload(new FormData(adForm), function (response) {
+      if (response !== null) {
+        window.util.showSuccess();
+        resetForm();
+      }
+    },
+    function (errorMessage) {
+      window.util.createErrorMessage(errorMessage);
+    });
+    evt.preventDefault();
+  });
 
   var validate = function () {
     clearErrors();
@@ -150,7 +162,7 @@
   resetButton.addEventListener('click', resetForm);
 
   var clearErrors = function () {
-    var errorElements = adForm.querySelectorAll('.error');
+    var errorElements = adForm.querySelectorAll('.' + ERROR_CLASS);
 
     for (var i = 0; i < errorElements.length; i++) {
       var element = errorElements[i];
@@ -159,12 +171,14 @@
     }
   };
 
+  var clearForm = function () {
+    clearFields();
+    setDefaultValues();
+    clearErrors();
+  };
+
   window.form = {
-    clearForm: function () {
-      clearFields();
-      setDefaultValues();
-      clearErrors();
-    },
+    clearForm: clearForm,
     toggleFieldsets: function (flag) {
       var fieldsets = document.querySelectorAll('fieldset');
 
