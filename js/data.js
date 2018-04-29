@@ -2,9 +2,11 @@
 
 (function () {
   var advertisements = [];
+  var filteredAdvertisements = [];
 
   var setData = function (response) {
     window.data.advertisements = response;
+    window.data.filteredAdvertisements = response;
   };
 
   var isDataLoaded = function () {
@@ -14,6 +16,7 @@
   window.data = {
     setData: setData,
     advertisements: advertisements,
+    filteredAdvertisements: filteredAdvertisements,
     isDataLoaded: isDataLoaded
   };
 })();
