@@ -8,6 +8,7 @@
   var SUCCESS_TIMEOUT = 3000;
 
   var successElement = document.querySelector('.success');
+  var lastTimeout;
 
   var createErrorMessage = function (message) {
     var errorElement = document.createElement('div');
@@ -63,6 +64,14 @@
       setTimeout(function () {
         document.body.removeChild(errorElem);
       }, ERROR_TIMEOUT);
+    },
+    debounce: function (func) {
+      var DEBOUNCE_INTERVAL = 500;
+
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(func, DEBOUNCE_INTERVAL);
     }
   };
 })();

@@ -155,6 +155,7 @@
   submitButton.addEventListener('click', validate);
 
   var resetForm = function () {
+    window.filter.resetFilter();
     window.map.setActiveState(false);
     window.card.toggleCardVisibility(false);
   };
