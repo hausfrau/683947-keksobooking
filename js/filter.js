@@ -11,6 +11,9 @@
   var FILTER_WASHER = 'filter-washer';
   var FILTER_ELEVATOR = 'filter-elevator';
   var FILTER_CONDITIONER = 'filter-conditioner';
+  var MAP_FILTER = 'map__filter';
+  var MAP_CHECKBOX = 'map__checkbox';
+  var ADVERTISEMENT_COUNT = 5;
 
   var mapFilters = document.querySelector('.map__filters');
   var housingType = mapFilters.querySelector('#housing-type');
@@ -24,7 +27,6 @@
   var filterWasher = features.querySelector('#filter-washer');
   var filterElevator = features.querySelector('#filter-elevator');
   var filterConditioner = features.querySelector('#filter-conditioner');
-  var isUnFiltered = true;
 
   var featuresClassListMap = {
     'filter-wifi': 'wifi',
@@ -46,22 +48,6 @@
     'filter-washer': false,
     'filter-elevator': false,
     'filter-conditioner': false
-  };
-
-  var checkForUnfiltered = function () {
-    window.filter.isUnFiltered = false;
-    if (housingType.value === 'any' &&
-      housingPrice.value === 'any' &&
-      housingRooms.value === 'any' &&
-      housingGuests.value === 'any' &&
-      !filterWifi.checked &&
-      !filterDishwasher.checked &&
-      !filterParking.checked &&
-      !filterWasher.checked &&
-      !filterElevator.checked &&
-      !filterConditioner.checked) {
-      window.filter.isUnFiltered = true;
-    }
   };
 
   var resetSelectedOptions = function () {
@@ -113,87 +99,37 @@
     return satisfaction;
   };
 
-  var sortAdvertisementsByPrice = function () {
-    return window.data.advertisements.slice().sort(function (one, two) {
-      var priceDifference = one.offer.price - two.offer.price;
-      if (priceDifference === 0) {
-        priceDifference = window.data.advertisements.indexOf(two) - window.data.advertisements.indexOf(one);
-      }
-      return priceDifference;
-    });
+  var checkFilterCheckbox = function (el, feature) {
+    return !selectedOptions[feature] ||
+      (selectedOptions[feature] &&
+        el.offer.features &&
+        el.offer.features.indexOf(featuresClassListMap[feature]) !== -1);
   };
 
-  var checkForSuitability = function (element) {
-    var houseType = selectedOptions[HOUSING_TYPE];
-    var houseTypeSuitable = false;
-    if (houseType === 'any' || element.offer.type === houseType) {
-      houseTypeSuitable = true;
-    }
+  var checkFilterSelect = function (el, feature, featureValue, isNumber) {
+    return featureValue === 'any' || el.offer[feature] === (isNumber ? +featureValue : featureValue);
+  };
 
-    var housePriceSuitable = false;
-    if (isPriceSatisfies(element.offer.price, selectedOptions[HOUSING_PRICE])) {
-      housePriceSuitable = true;
-    }
+  var filterAdvertisments = function (element) {
+    var houseTypeSuitable = checkFilterSelect(element, 'type', selectedOptions[HOUSING_TYPE], false);
 
-    var houseRooms = selectedOptions[HOUSING_ROOMS];
-    var houseRoomsSuitable = false;
-    if (houseRooms === 'any' || element.offer.rooms === +houseRooms) {
-      houseRoomsSuitable = true;
-    }
+    var housePriceSuitable = isPriceSatisfies(element.offer.price, selectedOptions[HOUSING_PRICE]);
 
-    var houseGuests = selectedOptions[HOISING_GUESTS];
-    var houseGuestsSuitable = false;
-    if (houseGuests === 'any' || element.offer.guests === +houseGuests) {
-      houseGuestsSuitable = true;
-    }
+    var houseRoomsSuitable = checkFilterSelect(element, 'rooms', selectedOptions[HOUSING_ROOMS], true);
 
-    var filterWifiSuitable = false;
-    if (!selectedOptions[FILTER_WIFI] ||
-      (selectedOptions[FILTER_WIFI] &&
-        element.offer.features &&
-        element.offer.features.indexOf(featuresClassListMap[FILTER_WIFI]) !== -1)) {
-      filterWifiSuitable = true;
-    }
+    var houseGuestsSuitable = checkFilterSelect(element, 'guests', selectedOptions[HOISING_GUESTS], true);
 
-    var filterDishwasherSuitable = false;
-    if (!selectedOptions[FILTER_DISHWASHER] ||
-      (selectedOptions[FILTER_DISHWASHER] &&
-        element.offer.features &&
-        element.offer.features.indexOf(featuresClassListMap[FILTER_DISHWASHER]) !== -1)) {
-      filterDishwasherSuitable = true;
-    }
+    var filterWifiSuitable = checkFilterCheckbox(element, FILTER_WIFI);
 
-    var filterParkingSuitable = false;
-    if (!selectedOptions[FILTER_PARKING] ||
-      (selectedOptions[FILTER_PARKING] &&
-        element.offer.features &&
-        element.offer.features.indexOf(featuresClassListMap[FILTER_PARKING]) !== -1)) {
-      filterParkingSuitable = true;
-    }
+    var filterDishwasherSuitable = checkFilterCheckbox(element, FILTER_DISHWASHER);
 
-    var filterWasherSuitable = false;
-    if (!selectedOptions[FILTER_WASHER] ||
-      (selectedOptions[FILTER_WASHER] &&
-        element.offer.features &&
-        element.offer.features.indexOf(featuresClassListMap[FILTER_WASHER]) !== -1)) {
-      filterWasherSuitable = true;
-    }
+    var filterParkingSuitable = checkFilterCheckbox(element, FILTER_PARKING);
 
-    var filterElevatorSuitable = false;
-    if (!selectedOptions[FILTER_ELEVATOR] ||
-      (selectedOptions[FILTER_ELEVATOR] &&
-        element.offer.features &&
-        element.offer.features.indexOf(featuresClassListMap[FILTER_ELEVATOR]) !== -1)) {
-      filterElevatorSuitable = true;
-    }
+    var filterWasherSuitable = checkFilterCheckbox(element, FILTER_WASHER);
 
-    var filterConditionerSuitable = false;
-    if (!selectedOptions[FILTER_CONDITIONER] ||
-      (selectedOptions[FILTER_CONDITIONER] &&
-        element.offer.features &&
-        element.offer.features.indexOf(featuresClassListMap[FILTER_CONDITIONER]) !== -1)) {
-      filterConditionerSuitable = true;
-    }
+    var filterElevatorSuitable = checkFilterCheckbox(element, FILTER_ELEVATOR);
+
+    var filterConditionerSuitable = checkFilterCheckbox(element, FILTER_CONDITIONER);
 
     return houseTypeSuitable &&
       housePriceSuitable &&
@@ -205,17 +141,45 @@
       filterWasherSuitable &&
       filterElevatorSuitable &&
       filterConditionerSuitable;
+  };
 
+  var updateAdvertisements = function () {
+    window.map.clearPins();
+    window.map.renderMapPins(window.data.advertisements.filter(filterAdvertisments).slice(0, ADVERTISEMENT_COUNT));
+  };
+
+  var mapFiltersChangeHandler = function (evt) {
+    window.card.toggleCardVisibility(false);
+
+    var element = evt.target;
+
+    var value = null;
+
+    while (!element.classList.contains(MAP_FILTER) && !element.classList.contains(MAP_CHECKBOX) && element.parentElement !== null) {
+      element = element.parentElement;
+    }
+
+    if (element.value) {
+      switch (element.type) {
+        case 'checkbox':
+          value = element.checked;
+          break;
+        default:
+          value = element.value;
+          break;
+      }
+
+      selectedOptions[element.id] = value;
+
+      window.map.clearPins();
+      window.util.debounce(updateAdvertisements);
+    }
   };
 
   window.filter = {
-    checkForUnfiltered: checkForUnfiltered,
-    resetFilter: resetFilter,
-    sortAdvertisementsByPrice: sortAdvertisementsByPrice,
-    checkForSuitability: checkForSuitability,
-    selectedOptions: selectedOptions,
-    isUnFiltered: isUnFiltered
+    ADVERTISEMENT_COUNT: ADVERTISEMENT_COUNT,
+    resetFilter: resetFilter
   };
 
-  window.filter.isUnFiltered = true;
+  mapFilters.addEventListener('change', mapFiltersChangeHandler);
 })();

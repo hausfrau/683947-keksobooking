@@ -4,17 +4,13 @@
   var MAP_PIN_MAIN_X_LIMITS = [0, 1135];
   var MAP_PIN_MAIN_Y_LIMITS = [150, 625];
   var TAIL_HEIGHT = 22;
-  var ADVERTISEMENT_COUNT = 5;
   var MAP_PIN = 'map__pin';
-  var MAP_FILTER = 'map__filter';
-  var MAP_CHECKBOX = 'map__checkbox';
   var MAP_PIN_NOT_MAIN = '.map__pin:not(.map__pin--main)';
 
   var map = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
   var mapPinMain = document.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
-  var mapFilters = document.querySelector('.map__filters');
   var address = document.querySelector('#address');
   var mapPinMainStartLeft = mapPinMain.style.left;
   var mapPinMainStartTop = mapPinMain.style.top;
@@ -23,45 +19,6 @@
   var startCoords = {};
   var isPinsRendered = false;
   var mouseUp = false;
-
-  var updateAdvertisements = function () {
-    clearPins();
-    window.data.filteredAdvertisements = window.filter.sortAdvertisementsByPrice().filter(window.filter.checkForSuitability).slice(0, ADVERTISEMENT_COUNT);
-    renderMapPins(mapPins, window.data.filteredAdvertisements);
-  };
-
-  var getFilteredValues = function (evt) {
-    window.card.toggleCardVisibility(false);
-    var element = evt.target;
-    var value = null;
-    while (!element.classList.contains(MAP_FILTER) && !element.classList.contains(MAP_CHECKBOX) && element.parentElement !== null) {
-      element = element.parentElement;
-    }
-
-    if (element.value) {
-      switch (element.type) {
-        case 'checkbox':
-          value = element.checked;
-          break;
-        default:
-          value = element.value;
-          break;
-      }
-
-      window.filter.selectedOptions[element.id] = value;
-
-      window.filter.checkForUnfiltered();
-
-      if (window.filter.isUnFiltered) {
-        clearPins();
-        renderMapPins(mapPins, window.data.advertisements.slice(0, ADVERTISEMENT_COUNT));
-      } else {
-        window.util.debounce(updateAdvertisements);
-      }
-    }
-  };
-
-  mapFilters.addEventListener('change', getFilteredValues);
 
   var initAddress = function () {
     address.value = (parseInt(mapPinMain.style.left, 10) - mapPinMainWidth / 2) + ', ' + (parseInt(mapPinMain.style.top, 10) - mapPinMainHeight / 2);
@@ -81,7 +38,7 @@
     isPinsRendered = false;
   };
 
-  var renderMapPins = function (parentElement, advertisementsArray) {
+  var renderMapPins = function (advertisementsArray) {
     if (!advertisementsArray.length) {
       return;
     }
@@ -90,10 +47,10 @@
 
     for (var i = 0; i < advertisementsArray.length; i++) {
       var advertisement = advertisementsArray[i];
-      fragment.appendChild(window.pin.createPin(advertisement, i));
+      fragment.appendChild(window.pin.createPin(advertisement));
     }
 
-    parentElement.appendChild(fragment);
+    mapPins.appendChild(fragment);
     isPinsRendered = true;
   };
 
@@ -165,11 +122,7 @@
     upEvt.preventDefault();
     setActiveState(true);
     if (!isPinsRendered) {
-      if (window.filter.isUnFiltered) {
-        renderMapPins(mapPins, window.data.advertisements.slice(0, ADVERTISEMENT_COUNT));
-      } else {
-        renderMapPins(mapPins, window.data.filteredAdvertisements.slice(0, ADVERTISEMENT_COUNT));
-      }
+      renderMapPins(window.data.advertisements.slice(0, window.filter.ADVERTISEMENT_COUNT));
     }
     updateAddress();
     document.removeEventListener('mousemove', mouseMoveHandler);
@@ -179,22 +132,15 @@
 
   var mapPinsClickHandler = function (evt) {
     var element = evt.target;
-    var index;
 
     while (!element.classList.contains(MAP_PIN) && element.parentElement !== null) {
       element = element.parentElement;
     }
 
-    index = element.dataset.index;
-
     window.card.toggleCardVisibility(false);
 
-    if (isFinite(index)) {
-      if (window.filter.isUnFiltered) {
-        window.card.openCard(window.data.advertisements[index]);
-      } else {
-        window.card.openCard(window.data.filteredAdvertisements[index]);
-      }
+    if (element.dataset.advertisement) {
+      window.card.openCard(JSON.parse(element.dataset.advertisement));
     }
   };
 
@@ -212,7 +158,7 @@
     window.data.setData(response);
 
     if (mouseUp) {
-      renderMapPins(mapPins, window.data.advertisements.slice(0, ADVERTISEMENT_COUNT));
+      renderMapPins(window.data.advertisements.slice(0, window.filter.ADVERTISEMENT_COUNT));
       mouseUp = false;
     }
   };
@@ -236,7 +182,9 @@
   };
 
   window.map = {
-    setActiveState: setActiveState
+    setActiveState: setActiveState,
+    renderMapPins: renderMapPins,
+    clearPins: clearPins
   };
 
   setActiveState(false);
