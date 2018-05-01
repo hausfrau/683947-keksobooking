@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var createPin = function (advertisement, ind) {
+  var createPin = function (advertisement) {
     var template = document.querySelector('template');
     var mapPinTemplate = template.content.querySelector('.map__pin');
     var mapPinElement = mapPinTemplate.cloneNode(true);
@@ -11,7 +11,7 @@
     mapPinElement.style.left = advertisement.location.x - imgElement.width / 2 + 'px';
     mapPinElement.style.top = advertisement.location.y - imgElement.height + 'px';
     imgElement.src = advertisement.author.avatar;
-    mapPinElement.dataset.index = ind;
+    mapPinElement.dataset.advertisement = JSON.stringify(advertisement);
 
     return mapPinElement;
   };

@@ -6,8 +6,10 @@
   var ENTER_KEYCODE = 13;
   var ERROR_TIMEOUT = 10000;
   var SUCCESS_TIMEOUT = 3000;
+  var DEBOUNCE_INTERVAL = 500;
 
   var successElement = document.querySelector('.success');
+  var lastTimeout;
 
   var createErrorMessage = function (message) {
     var errorElement = document.createElement('div');
@@ -63,6 +65,12 @@
       setTimeout(function () {
         document.body.removeChild(errorElem);
       }, ERROR_TIMEOUT);
+    },
+    debounce: function (func) {
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(func, DEBOUNCE_INTERVAL);
     }
   };
 })();
