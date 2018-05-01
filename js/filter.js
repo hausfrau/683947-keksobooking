@@ -160,13 +160,10 @@
     }
 
     if (element.value) {
-      switch (element.type) {
-        case 'checkbox':
-          value = element.checked;
-          break;
-        default:
-          value = element.value;
-          break;
+      if (element.type === 'checkbox') {
+        value = element.checked;
+      } else {
+        value = element.value;
       }
 
       selectedOptions[element.id] = value;

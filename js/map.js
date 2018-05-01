@@ -35,7 +35,6 @@
     for (var i = 0; i < allmapPins.length; i++) {
       mapPins.removeChild(allmapPins[i]);
     }
-    isPinsRendered = false;
   };
 
   var renderMapPins = function (advertisementsArray) {

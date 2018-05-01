@@ -6,6 +6,7 @@
   var ENTER_KEYCODE = 13;
   var ERROR_TIMEOUT = 10000;
   var SUCCESS_TIMEOUT = 3000;
+  var DEBOUNCE_INTERVAL = 500;
 
   var successElement = document.querySelector('.success');
   var lastTimeout;
@@ -66,8 +67,6 @@
       }, ERROR_TIMEOUT);
     },
     debounce: function (func) {
-      var DEBOUNCE_INTERVAL = 500;
-
       if (lastTimeout) {
         window.clearTimeout(lastTimeout);
       }
