@@ -23,30 +23,30 @@
   var capacityElement = mapCardElement.querySelector('.popup__text--capacity');
   var timeElement = mapCardElement.querySelector('.popup__text--time');
   var descriptionElement = mapCardElement.querySelector('.popup__description');
-  var imgElement = mapCardElement.querySelector('.popup__avatar');
+  var avatarElement = mapCardElement.querySelector('.popup__avatar');
   var popupPhotosElement = mapCardElement.querySelector('.popup__photos');
   var closeButton = mapCardElement.querySelector('.popup__close');
 
   var renderPopupPhoto = function (parentElement, photo) {
-    var imgEl = parentElement.querySelector('img').cloneNode(true);
+    var photoElement = parentElement.querySelector('img').cloneNode(true);
 
-    imgEl.src = photo;
-    imgEl.classList.remove(HIDDEN);
+    photoElement.src = photo;
+    photoElement.classList.remove(HIDDEN);
 
-    return imgEl;
+    return photoElement;
   };
 
   var renderPopupPhotos = function (parentElement, photos) {
-    var allImgs = parentElement.querySelectorAll('img:not(.hidden)');
+    var notHiddenImages = parentElement.querySelectorAll('img:not(.hidden)');
 
-    for (i = 0; i < allImgs.length; i++) {
-      parentElement.removeChild(allImgs[i]);
+    for (var i = 0; i < notHiddenImages.length; i++) {
+      parentElement.removeChild(notHiddenImages[i]);
     }
 
     if (photos.length > 0) {
       var fragment = document.createDocumentFragment();
-      for (var i = 0; i < photos.length; i++) {
-        fragment.appendChild(renderPopupPhoto(parentElement, photos[i]));
+      for (var j = 0; j < photos.length; j++) {
+        fragment.appendChild(renderPopupPhoto(parentElement, photos[j]));
       }
 
       parentElement.appendChild(fragment);
@@ -62,15 +62,15 @@
     return liElement;
   };
 
-  var renderPopupFeatures = function (parentElement, featuresArray) {
-    var featuresArrayLength = featuresArray.length;
-    if (featuresArrayLength > 0) {
+  var renderPopupFeatures = function (parentElement, features) {
+    var featuresLength = features.length;
+    if (featuresLength > 0) {
       var fragment = document.createDocumentFragment();
       var ulElement = document.createElement('ul');
       ulElement.className = POPUP_FEATURES;
 
-      for (var i = 0; i < featuresArrayLength; i++) {
-        fragment.appendChild(renderPopupFeature(featuresArray[i]));
+      for (var i = 0; i < featuresLength; i++) {
+        fragment.appendChild(renderPopupFeature(features[i]));
       }
 
       ulElement.appendChild(fragment);
@@ -89,8 +89,8 @@
   var clearCard = function () {
     var features = mapCardElement.querySelector('.' + POPUP_FEATURES);
 
-    imgElement.src = '';
-    imgElement.alt = '';
+    avatarElement.src = '';
+    avatarElement.alt = '';
     titleElement.textContent = '';
     addressElement.textContent = '';
     priceElement.innerHTML = '';
@@ -105,20 +105,24 @@
   };
 
   var fillCard = function (advertisement) {
-    window.util.removeClass(mapCardElement, HIDDEN);
+    var childElements = mapCardElement.querySelectorAll('.' + HIDDEN);
+
+    for (var i = 0; i < childElements.length; i++) {
+      childElements[i].classList.remove(HIDDEN);
+    }
 
     clearCard();
 
     popupPhotosElement.querySelector('img').classList.add(HIDDEN);
 
-    imgElement.src = advertisement.author.avatar;
+    avatarElement.src = advertisement.author.avatar;
 
     var title = advertisement.offer.title;
     if (title) {
-      imgElement.alt = title;
+      avatarElement.alt = title;
       titleElement.textContent = title;
     } else {
-      imgElement.alt = '';
+      avatarElement.alt = '';
       titleElement.classList.add(HIDDEN);
     }
 

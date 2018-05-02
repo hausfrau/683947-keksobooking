@@ -37,15 +37,15 @@
     }
   };
 
-  var renderMapPins = function (advertisementsArray) {
-    if (!advertisementsArray.length) {
+  var renderMapPins = function (advertisements) {
+    if (!advertisements.length) {
       return;
     }
 
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < advertisementsArray.length; i++) {
-      var advertisement = advertisementsArray[i];
+    for (var i = 0; i < advertisements.length; i++) {
+      var advertisement = advertisements[i];
       fragment.appendChild(window.pin.createPin(advertisement));
     }
 
@@ -110,6 +110,7 @@
     window.form.toggleFieldsets(!activeState);
 
     if (!activeState) {
+      isPinsRendered = false;
       clearPins();
       resetMapPinMain();
     }

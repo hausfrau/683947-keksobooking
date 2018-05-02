@@ -47,13 +47,6 @@
         action(evt);
       }
     },
-    removeClass: function (parentElement, className) {
-      var childElements = parentElement.querySelectorAll('.' + className);
-
-      for (var i = 0; i < childElements.length; i++) {
-        childElements[i].classList.remove(className);
-      }
-    },
     showSuccess: function () {
       successElement.classList.remove(HIDDEN);
       setTimeout(function () {
