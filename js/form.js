@@ -112,7 +112,7 @@
     }
   };
 
-  var selectsOnChangeHandler = function (evt) {
+  var selectOnChangeHandler = function (evt) {
     var nameElement = evt.target.name;
 
     switch (nameElement) {
@@ -130,7 +130,7 @@
     }
   };
 
-  adForm.addEventListener('change', selectsOnChangeHandler);
+  adForm.addEventListener('change', selectOnChangeHandler);
   adForm.addEventListener('submit', function (evt) {
     window.backend.upload(new FormData(adForm), function (response) {
       if (response !== null) {

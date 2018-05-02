@@ -4,7 +4,9 @@
 
   var LOAD_URL = 'https://js.dump.academy/keksobooking/data';
   var UPLOAD_URL = 'https://js.dump.academy/keksobooking';
-
+  var SUCCESSFUL_STATUS = 200;
+  var INVALID_REQUEST_STATUS = 400;
+  var NOTHING_FOUND_STATUS = 404;
   var isDataLoading = false;
 
   var load = function (onLoad, onError) {
@@ -16,14 +18,14 @@
     xhr.addEventListener('load', function () {
       var error;
       switch (xhr.status) {
-        case 200:
+        case SUCCESSFUL_STATUS:
           window.data.isDataLoading = false;
           onLoad(xhr.response);
           break;
-        case 400:
+        case INVALID_REQUEST_STATUS:
           error = 'Неверный запрос';
           break;
-        case 404:
+        case NOTHING_FOUND_STATUS:
           error = 'Ничего не найдено';
           break;
 

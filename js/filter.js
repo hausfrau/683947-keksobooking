@@ -14,6 +14,10 @@
   var MAP_FILTER = 'map__filter';
   var MAP_CHECKBOX = 'map__checkbox';
   var ADVERTISEMENT_COUNT = 5;
+  var ANY = 'any';
+  var MIDDLE = 'middle';
+  var LOW = 'low';
+  var HIGH = 'high';
 
   var mapFilters = document.querySelector('.map__filters');
   var housingType = mapFilters.querySelector('#housing-type');
@@ -82,16 +86,16 @@
   var isPriceSatisfies = function (advertisementPrice, selectedPrice) {
     var satisfaction = false;
     switch (selectedPrice) {
-      case 'any':
+      case ANY:
         satisfaction = true;
         break;
-      case 'middle':
+      case MIDDLE:
         satisfaction = advertisementPrice >= 10000 && advertisementPrice <= 50000;
         break;
-      case 'low':
+      case LOW:
         satisfaction = advertisementPrice <= 10000;
         break;
-      case 'high':
+      case HIGH:
         satisfaction = advertisementPrice >= 50000;
         break;
     }
@@ -107,40 +111,20 @@
   };
 
   var checkFilterSelect = function (el, feature, featureValue, isNumber) {
-    return featureValue === 'any' || el.offer[feature] === (isNumber ? +featureValue : featureValue);
+    return featureValue === ANY || el.offer[feature] === (isNumber ? +featureValue : featureValue);
   };
 
   var filterAdvertisments = function (element) {
-    var houseTypeSuitable = checkFilterSelect(element, 'type', selectedOptions[HOUSING_TYPE], false);
-
-    var housePriceSuitable = isPriceSatisfies(element.offer.price, selectedOptions[HOUSING_PRICE]);
-
-    var houseRoomsSuitable = checkFilterSelect(element, 'rooms', selectedOptions[HOUSING_ROOMS], true);
-
-    var houseGuestsSuitable = checkFilterSelect(element, 'guests', selectedOptions[HOISING_GUESTS], true);
-
-    var filterWifiSuitable = checkFilterCheckbox(element, FILTER_WIFI);
-
-    var filterDishwasherSuitable = checkFilterCheckbox(element, FILTER_DISHWASHER);
-
-    var filterParkingSuitable = checkFilterCheckbox(element, FILTER_PARKING);
-
-    var filterWasherSuitable = checkFilterCheckbox(element, FILTER_WASHER);
-
-    var filterElevatorSuitable = checkFilterCheckbox(element, FILTER_ELEVATOR);
-
-    var filterConditionerSuitable = checkFilterCheckbox(element, FILTER_CONDITIONER);
-
-    return houseTypeSuitable &&
-      housePriceSuitable &&
-      houseRoomsSuitable &&
-      houseGuestsSuitable &&
-      filterWifiSuitable &&
-      filterDishwasherSuitable &&
-      filterParkingSuitable &&
-      filterWasherSuitable &&
-      filterElevatorSuitable &&
-      filterConditionerSuitable;
+    return checkFilterSelect(element, 'type', selectedOptions[HOUSING_TYPE], false) &&
+      isPriceSatisfies(element.offer.price, selectedOptions[HOUSING_PRICE]) &&
+      checkFilterSelect(element, 'rooms', selectedOptions[HOUSING_ROOMS], true) &&
+      checkFilterSelect(element, 'guests', selectedOptions[HOISING_GUESTS], true) &&
+      checkFilterCheckbox(element, FILTER_WIFI) &&
+      checkFilterCheckbox(element, FILTER_DISHWASHER) &&
+      checkFilterCheckbox(element, FILTER_PARKING) &&
+      checkFilterCheckbox(element, FILTER_WASHER) &&
+      checkFilterCheckbox(element, FILTER_ELEVATOR) &&
+      checkFilterCheckbox(element, FILTER_CONDITIONER);
   };
 
   var updateAdvertisements = function () {
