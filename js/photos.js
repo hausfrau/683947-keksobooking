@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var ACCEPTED_TYPES = '.jpg, .jpeg, .png, .gif, .pjpeg';
+  var EMPTY_AVATAR = 'img/muffin-grey.svg';
+  var AD_FORM_PHOTO = 'ad-form__photo';
   var FILE_TYPES = [
     'image/jpeg',
     'image/jpg',
@@ -15,8 +18,7 @@
   var headerPreviewImg = headerPreview.querySelector('img');
   var adFormPhotoContainer = document.querySelector('.ad-form__photo-container');
   var images = adFormPhotoContainer.querySelector('#images');
-  var adFormPhoto = adFormPhotoContainer.querySelector('.ad-form__photo');
-  var ulAdFormPhoto;
+  var adPhotoTemplate = adFormPhotoContainer.querySelector('.ad-form__photo');
   var dragSourceElement;
 
   var checkForValidFileType = function (file) {
@@ -35,7 +37,7 @@
     evt.preventDefault();
   };
 
-  var liDragstartHandle = function (evt) {
+  var photoDragstartHandle = function (evt) {
     var currentPhoto = evt.currentTarget;
 
     dragSourceElement = currentPhoto;
@@ -44,7 +46,7 @@
     evt.dataTransfer.setData('text/html', currentPhoto.innerHTML);
   };
 
-  var liDragoverHandle = function (evt) {
+  var photoDragoverHandle = function (evt) {
     if (evt.preventDefault) {
       evt.preventDefault();
     }
@@ -54,7 +56,7 @@
     return false;
   };
 
-  var liDropHandle = function (evt) {
+  var photoDropHandle = function (evt) {
     var currentPhoto = evt.currentTarget;
 
     if (evt.stopPropagation) {
@@ -78,18 +80,16 @@
 
     reader.addEventListener('load', function () {
       if (multiple) {
-        var li = document.createElement('li');
-        li.style.marginBottom = '5px';
-        li.draggable = true;
-        li.addEventListener('dragstart', liDragstartHandle);
-        li.addEventListener('dragover', liDragoverHandle);
-        li.addEventListener('drop', liDropHandle);
-        li.style.cursor = 'pointer';
+        var photo = adPhotoTemplate.cloneNode(true);
+        photo.draggable = true;
+        photo.addEventListener('dragstart', photoDragstartHandle);
+        photo.addEventListener('dragover', photoDragoverHandle);
+        photo.addEventListener('drop', photoDropHandle);
         var img = document.createElement('img');
         img.style.maxWidth = '100%';
         img.src = reader.result;
-        li.appendChild(img);
-        previewParentElement.appendChild(li);
+        photo.appendChild(img);
+        previewParentElement.appendChild(photo);
       } else {
         previewImgElement.src = reader.result;
       }
@@ -98,14 +98,21 @@
     reader.readAsDataURL(file);
   };
 
-  var readFiles = function (evt, isAvatar) {
+  var readFiles = function (evt, multiple) {
+    var isAvatar = !multiple;
     var dt;
     var files;
-    if (evt) {
+
+    if (evt.target.name === 'avatar') {
+      isAvatar = true;
+    }
+
+    dt = evt.dataTransfer;
+
+    if (dt) {
       evt.stopPropagation();
       evt.preventDefault();
 
-      dt = evt.dataTransfer;
       files = dt.files;
     } else {
       files = isAvatar ? avatar.files : images.files;
@@ -116,21 +123,20 @@
         var avatarFile = files[0];
         readAndPreviewFile(avatarFile, null, headerPreviewImg, false);
       } else {
-        var ul = adFormPhoto.querySelector('ul');
         for (var i = 0; i < files.length; i++) {
           var file = files[i];
-          readAndPreviewFile(file, ul, null, true);
+          readAndPreviewFile(file, adFormPhotoContainer, null, true);
         }
       }
     }
   };
 
   var adFormHeaderDropHandler = function (evt) {
-    readFiles(evt, true);
+    readFiles(evt, false);
   };
 
   var adFormPhotoContainerDropHandler = function (evt) {
-    readFiles(evt, false);
+    readFiles(evt, true);
   };
 
   adFormHeader.addEventListener('dragenter', dragenterHandler);
@@ -144,19 +150,13 @@
 
   var setDropSettings = function () {
     images.multiple = true;
-    images.accept = '.jpg, .jpeg, .png, .gif, .pjpeg';
-    avatar.accept = '.jpg, .jpeg, .png, .gif, .pjpeg';
-    ulAdFormPhoto = document.createElement('ul');
-    ulAdFormPhoto.style.display = 'flex';
-    ulAdFormPhoto.style.flexDirection = 'column';
-    ulAdFormPhoto.style.padding = '0px';
-    ulAdFormPhoto.style.listStyle = 'none';
-    adFormPhoto.appendChild(ulAdFormPhoto);
+    images.accept = ACCEPTED_TYPES;
+    avatar.accept = ACCEPTED_TYPES;
   };
 
   var clearPhotos = function () {
-    headerPreviewImg.src = 'img/muffin-grey.svg';
-    window.util.removeChildren(ulAdFormPhoto, 'li');
+    headerPreviewImg.src = EMPTY_AVATAR;
+    window.util.removeChildren(adFormPhotoContainer, '.' + AD_FORM_PHOTO);
   };
 
   window.photos = {

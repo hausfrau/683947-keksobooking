@@ -115,15 +115,13 @@
   var selectOnChangeHandler = function (evt) {
     var nameElement = evt.target.name;
 
-    if (evt.target.name === 'avatar') {
-      window.photos.readFiles(null, true);
-    }
-
-    if (evt.target.name === 'images') {
-      window.photos.readFiles(null, false);
-    }
-
     switch (nameElement) {
+      case 'avatar':
+        window.photos.readFiles(evt, false);
+        break;
+      case 'images':
+        window.photos.readFiles(evt, true);
+        break;
       case 'type':
         verifyPrice();
         break;
