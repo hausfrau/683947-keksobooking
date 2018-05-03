@@ -86,7 +86,7 @@
         photo.addEventListener('dragover', photoDragoverHandle);
         photo.addEventListener('drop', photoDropHandle);
         var img = document.createElement('img');
-        img.style.maxWidth = '100%';
+        img.style.width = '100%';
         img.src = reader.result;
         photo.appendChild(img);
         adFormPhotoContainer.appendChild(photo);
@@ -129,11 +129,11 @@
   };
 
   var adFormHeaderDropHandler = function (evt) {
-    readFiles(evt, false);
+    readFiles(evt);
   };
 
   var adFormPhotoContainerDropHandler = function (evt) {
-    readFiles(evt, true);
+    readFiles(evt);
   };
 
   adFormHeader.addEventListener('dragenter', dragenterHandler);

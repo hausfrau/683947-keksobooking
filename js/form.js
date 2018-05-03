@@ -117,10 +117,10 @@
 
     switch (nameElement) {
       case 'avatar':
-        window.photos.readFiles(evt, false);
+        window.photos.readFiles(evt);
         break;
       case 'images':
-        window.photos.readFiles(evt, true);
+        window.photos.readFiles(evt);
         break;
       case 'type':
         verifyPrice();
