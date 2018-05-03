@@ -3,7 +3,7 @@
 (function () {
   var ACCEPTED_TYPES = '.jpg, .jpeg, .png, .gif, .pjpeg';
   var EMPTY_AVATAR = 'img/muffin-grey.svg';
-  var AD_FORM_PHOTO = 'ad-form__photo';
+  var AD_FORM_PHOTO_CLASS = 'ad-form__photo';
   var FILE_TYPES = [
     'image/jpeg',
     'image/jpg',
@@ -18,7 +18,7 @@
   var headerPreviewImg = headerPreview.querySelector('img');
   var adFormPhotoContainer = document.querySelector('.ad-form__photo-container');
   var images = adFormPhotoContainer.querySelector('#images');
-  var adPhotoTemplate = adFormPhotoContainer.querySelector('.ad-form__photo');
+  var adPhotoTemplate = adFormPhotoContainer.querySelector('.' + AD_FORM_PHOTO_CLASS);
   var dragSourceElement;
 
   var checkForValidFileType = function (file) {
@@ -71,7 +71,7 @@
     return false;
   };
 
-  var readAndPreviewFile = function (file, previewParentElement, previewImgElement, multiple) {
+  var readAndPreviewFile = function (file, multiple) {
     if (!checkForValidFileType(file)) {
       return;
     }
@@ -89,44 +89,41 @@
         img.style.maxWidth = '100%';
         img.src = reader.result;
         photo.appendChild(img);
-        previewParentElement.appendChild(photo);
+        adFormPhotoContainer.appendChild(photo);
       } else {
-        previewImgElement.src = reader.result;
+        headerPreviewImg.src = reader.result;
       }
     });
 
     reader.readAsDataURL(file);
   };
 
-  var readFiles = function (evt, multiple) {
-    var isAvatar = !multiple;
-    var dt;
-    var files;
+  var readFiles = function (evt) {
+    var isAvatar = false;
+    var dataTransfer = evt.dataTransfer;
+    var files = [];
 
-    if (evt.target.name === 'avatar') {
+    if (evt.target.name === 'avatar' || evt.target.htmlFor === 'avatar') {
       isAvatar = true;
     }
 
-    dt = evt.dataTransfer;
-
-    if (dt) {
+    if (dataTransfer) {
       evt.stopPropagation();
       evt.preventDefault();
 
-      files = dt.files;
+      files = dataTransfer.files;
     } else {
       files = isAvatar ? avatar.files : images.files;
     }
 
     if (files.length) {
       if (isAvatar) {
-        var avatarFile = files[0];
-        readAndPreviewFile(avatarFile, null, headerPreviewImg, false);
+        readAndPreviewFile(files[0], !isAvatar);
       } else {
         for (var i = 0; i < files.length; i++) {
-          var file = files[i];
-          readAndPreviewFile(file, adFormPhotoContainer, null, true);
+          readAndPreviewFile(files[i], !isAvatar);
         }
+        adPhotoTemplate.remove();
       }
     }
   };
@@ -156,7 +153,8 @@
 
   var clearPhotos = function () {
     headerPreviewImg.src = EMPTY_AVATAR;
-    window.util.removeChildren(adFormPhotoContainer, '.' + AD_FORM_PHOTO);
+    window.util.removeChildren(adFormPhotoContainer, '.' + AD_FORM_PHOTO_CLASS);
+    adFormPhotoContainer.appendChild(adPhotoTemplate);
   };
 
   window.photos = {
