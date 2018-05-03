@@ -36,10 +36,12 @@
   };
 
   var liDragstartHandle = function (evt) {
-    dragSourceElement = this;
+    var currentPhoto = evt.currentTarget;
+
+    dragSourceElement = currentPhoto;
 
     evt.dataTransfer.effectAllowed = 'move';
-    evt.dataTransfer.setData('text/html', this.innerHTML);
+    evt.dataTransfer.setData('text/html', currentPhoto.innerHTML);
   };
 
   var liDragoverHandle = function (evt) {
@@ -53,13 +55,15 @@
   };
 
   var liDropHandle = function (evt) {
+    var currentPhoto = evt.currentTarget;
+
     if (evt.stopPropagation) {
       evt.stopPropagation();
     }
 
-    if (dragSourceElement !== this) {
-      dragSourceElement.innerHTML = this.innerHTML;
-      this.innerHTML = evt.dataTransfer.getData('text/html');
+    if (dragSourceElement !== currentPhoto) {
+      dragSourceElement.innerHTML = currentPhoto.innerHTML;
+      currentPhoto.innerHTML = evt.dataTransfer.getData('text/html');
     }
 
     return false;
