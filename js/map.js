@@ -4,8 +4,8 @@
   var MAP_PIN_MAIN_X_LIMITS = [0, 1135];
   var MAP_PIN_MAIN_Y_LIMITS = [150, 625];
   var TAIL_HEIGHT = 22;
-  var MAP_PIN = 'map__pin';
-  var MAP_PIN_NOT_MAIN = '.map__pin:not(.map__pin--main)';
+  var MAP_PIN_SELECTOR = 'map__pin';
+  var PINS_SELECTOR = '.map__pin:not(.map__pin--main)';
 
   var map = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
@@ -30,10 +30,10 @@
   };
 
   var clearPins = function () {
-    var allmapPins = mapPins.querySelectorAll(MAP_PIN_NOT_MAIN);
+    var pins = mapPins.querySelectorAll(PINS_SELECTOR);
 
-    for (var i = 0; i < allmapPins.length; i++) {
-      mapPins.removeChild(allmapPins[i]);
+    for (var i = 0; i < pins.length; i++) {
+      mapPins.removeChild(pins[i]);
     }
   };
 
@@ -101,6 +101,7 @@
 
     mapPinMain.style.top = finalTop + 'px';
     mapPinMain.style.left = finalLeft + 'px';
+
     updateAddress();
   };
 
@@ -121,19 +122,24 @@
   var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault();
     setActiveState(true);
+
     if (!isPinsRendered) {
       renderMapPins(window.data.advertisements.slice(0, window.filter.ADVERTISEMENT_COUNT));
+      window.filter.toggleFilter(false);
     }
+
     updateAddress();
+
     document.removeEventListener('mousemove', mouseMoveHandler);
     document.removeEventListener('mouseup', mouseUpHandler);
+
     mouseUp = true;
   };
 
   var mapPinsClickHandler = function (evt) {
     var element = evt.target;
 
-    while (!element.classList.contains(MAP_PIN) && element.parentElement !== null) {
+    while (!element.classList.contains(MAP_PIN_SELECTOR) && element.parentElement !== null) {
       element = element.parentElement;
     }
 
@@ -145,7 +151,6 @@
   };
 
   mapPins.addEventListener('click', mapPinsClickHandler);
-
   mapPins.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, mapPinsClickHandler);
   });
@@ -159,6 +164,7 @@
 
     if (mouseUp) {
       renderMapPins(window.data.advertisements.slice(0, window.filter.ADVERTISEMENT_COUNT));
+      window.filter.toggleFilter(false);
       mouseUp = false;
     }
   };
@@ -187,7 +193,9 @@
     clearPins: clearPins
   };
 
-  setActiveState(false);
+  window.form.toggleFieldsets(true);
+  window.filter.toggleFilter(true);
+  initAddress();
   mapPinMain.draggable = true;
   mapPinMain.addEventListener('mousedown', mouseDownHandler);
 })();

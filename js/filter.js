@@ -4,7 +4,7 @@
   var HOUSING_TYPE = 'housing-type';
   var HOUSING_PRICE = 'housing-price';
   var HOUSING_ROOMS = 'housing-rooms';
-  var HOISING_GUESTS = 'housing-guests';
+  var HOUSING_GUESTS = 'housing-guests';
   var FILTER_WIFI = 'filter-wifi';
   var FILTER_DISHWASHER = 'filter-dishwasher';
   var FILTER_PARKING = 'filter-parking';
@@ -82,7 +82,6 @@
     resetSelectedOptions();
   };
 
-
   var isPriceSatisfies = function (advertisementPrice, selectedPrice) {
     var satisfaction = false;
     switch (selectedPrice) {
@@ -118,7 +117,7 @@
     return checkFilterSelect(element, 'type', selectedOptions[HOUSING_TYPE], false) &&
       isPriceSatisfies(element.offer.price, selectedOptions[HOUSING_PRICE]) &&
       checkFilterSelect(element, 'rooms', selectedOptions[HOUSING_ROOMS], true) &&
-      checkFilterSelect(element, 'guests', selectedOptions[HOISING_GUESTS], true) &&
+      checkFilterSelect(element, 'guests', selectedOptions[HOUSING_GUESTS], true) &&
       checkFilterCheckbox(element, FILTER_WIFI) &&
       checkFilterCheckbox(element, FILTER_DISHWASHER) &&
       checkFilterCheckbox(element, FILTER_PARKING) &&
@@ -156,8 +155,22 @@
     }
   };
 
+  var toggleFilter = function (flag) {
+    var mapFilter = document.querySelectorAll('.' + MAP_FILTER);
+    var mapCheckbox = document.querySelectorAll('.' + MAP_CHECKBOX);
+
+    for (var i = 0; i < mapFilter.length; i++) {
+      mapFilter[i].disabled = flag;
+    }
+
+    for (var j = 0; j < mapCheckbox.length; j++) {
+      mapCheckbox[j].disabled = flag;
+    }
+  };
+
   window.filter = {
     ADVERTISEMENT_COUNT: ADVERTISEMENT_COUNT,
+    toggleFilter: toggleFilter,
     resetFilter: resetFilter
   };
 

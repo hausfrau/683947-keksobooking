@@ -64,13 +64,6 @@
         window.clearTimeout(lastTimeout);
       }
       lastTimeout = window.setTimeout(func, DEBOUNCE_INTERVAL);
-    },
-    removeChildren: function (parentElement, selector) {
-      var children = parentElement.querySelectorAll(selector);
-
-      for (var i = 0; i < children.length; i++) {
-        parentElement.removeChild(children[i]);
-      }
     }
   };
 })();

@@ -151,9 +151,17 @@
     avatar.accept = ACCEPTED_TYPES;
   };
 
+  var removeChildren = function (parentElement, selector) {
+    var children = parentElement.querySelectorAll(selector);
+
+    for (var i = 0; i < children.length; i++) {
+      parentElement.removeChild(children[i]);
+    }
+  };
+
   var clearPhotos = function () {
     headerPreviewImg.src = EMPTY_AVATAR;
-    window.util.removeChildren(adFormPhotoContainer, '.' + AD_FORM_PHOTO_CLASS);
+    removeChildren(adFormPhotoContainer, '.' + AD_FORM_PHOTO_CLASS);
     adFormPhotoContainer.appendChild(adPhotoTemplate);
   };
 

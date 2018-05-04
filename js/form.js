@@ -147,6 +147,7 @@
     function (errorMessage) {
       window.util.createErrorMessage(errorMessage);
     });
+
     evt.preventDefault();
   });
 
@@ -161,6 +162,7 @@
   submitButton.addEventListener('click', validate);
 
   var resetForm = function () {
+    window.filter.toggleFilter(true);
     window.filter.resetFilter();
     window.map.setActiveState(false);
     window.card.toggleCardVisibility(false);
