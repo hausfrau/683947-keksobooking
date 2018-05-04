@@ -37,11 +37,7 @@
   };
 
   var renderPopupPhotos = function (parentElement, photos) {
-    var notHiddenImages = parentElement.querySelectorAll('img:not(.hidden)');
-
-    for (var i = 0; i < notHiddenImages.length; i++) {
-      parentElement.removeChild(notHiddenImages[i]);
-    }
+    window.util.removeChildren(parentElement, 'img:not(.hidden)');
 
     if (photos.length > 0) {
       var fragment = document.createDocumentFragment();

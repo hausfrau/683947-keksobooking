@@ -116,6 +116,12 @@
     var nameElement = evt.target.name;
 
     switch (nameElement) {
+      case 'avatar':
+        window.photos.readFiles(evt);
+        break;
+      case 'images':
+        window.photos.readFiles(evt);
+        break;
       case 'type':
         verifyPrice();
         break;
@@ -173,6 +179,7 @@
   };
 
   var clearForm = function () {
+    window.photos.clearPhotos();
     clearFields();
     setDefaultValues();
     clearErrors();

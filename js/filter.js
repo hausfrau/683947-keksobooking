@@ -152,7 +152,6 @@
 
       selectedOptions[element.id] = value;
 
-      window.map.clearPins();
       window.util.debounce(updateAdvertisements);
     }
   };
