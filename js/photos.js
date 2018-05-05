@@ -151,17 +151,14 @@
     avatar.accept = ACCEPTED_TYPES;
   };
 
-  var removeChildren = function (parentElement, selector) {
-    var children = parentElement.querySelectorAll(selector);
-
-    for (var i = 0; i < children.length; i++) {
-      parentElement.removeChild(children[i]);
-    }
-  };
-
   var clearPhotos = function () {
+    var photoElements = adFormPhotoContainer.querySelectorAll('.' + AD_FORM_PHOTO_CLASS);
+
+    for (var i = 0; i < photoElements.length; i++) {
+      adFormPhotoContainer.removeChild(photoElements[i]);
+    }
+
     headerPreviewImg.src = EMPTY_AVATAR;
-    removeChildren(adFormPhotoContainer, '.' + AD_FORM_PHOTO_CLASS);
     adFormPhotoContainer.appendChild(adPhotoTemplate);
   };
 
