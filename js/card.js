@@ -25,28 +25,24 @@
   var descriptionElement = mapCardElement.querySelector('.popup__description');
   var avatarElement = mapCardElement.querySelector('.popup__avatar');
   var popupPhotosElement = mapCardElement.querySelector('.popup__photos');
+  var photoTemplate = popupPhotosElement.querySelector('img');
   var closeButton = mapCardElement.querySelector('.popup__close');
 
-  var renderPopupPhoto = function (parentElement, photo) {
-    var photoElement = parentElement.querySelector('img').cloneNode(true);
+  var renderPopupPhoto = function (photo) {
+    var photoElement = photoTemplate.cloneNode(true);
 
     photoElement.src = photo;
-    photoElement.classList.remove(HIDDEN);
 
     return photoElement;
   };
 
-  var renderPopupPhotos = function (parentElement, photos) {
-    window.util.removeChildren(parentElement, 'img:not(.hidden)');
-
-    if (photos.length > 0) {
-      var fragment = document.createDocumentFragment();
-      for (var j = 0; j < photos.length; j++) {
-        fragment.appendChild(renderPopupPhoto(parentElement, photos[j]));
-      }
-
-      parentElement.appendChild(fragment);
+  var renderPopupPhotos = function (photos) {
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < photos.length; i++) {
+      fragment.appendChild(renderPopupPhoto(photos[i]));
     }
+
+    popupPhotosElement.appendChild(fragment);
   };
 
   var renderPopupFeature = function (feature) {
@@ -75,10 +71,10 @@
   };
 
   var clearPhotos = function () {
-    var allImgs = popupPhotosElement.querySelectorAll('img');
+    var images = popupPhotosElement.querySelectorAll('img');
 
-    for (var i = 1; i < allImgs.length; i++) {
-      popupPhotosElement.removeChild(allImgs[i]);
+    for (var i = 0; i < images.length; i++) {
+      popupPhotosElement.removeChild(images[i]);
     }
   };
 
@@ -93,11 +89,14 @@
     typeElement.textContent = '';
     capacityElement.textContent = '';
     timeElement.textContent = '';
+
     if (features !== null) {
       mapCardElement.removeChild(features);
     }
+
     descriptionElement.textContent = '';
     clearPhotos();
+    popupPhotosElement.appendChild(photoTemplate);
   };
 
   var fillCard = function (advertisement) {
@@ -108,8 +107,6 @@
     }
 
     clearCard();
-
-    popupPhotosElement.querySelector('img').classList.add(HIDDEN);
 
     avatarElement.src = advertisement.author.avatar;
 
@@ -174,7 +171,14 @@
       descriptionElement.classList.add(HIDDEN);
     }
 
-    renderPopupPhotos(popupPhotosElement, advertisement.offer.photos);
+    var photos = advertisement.offer.photos;
+    if (photos.length > 0) {
+      renderPopupPhotos(photos);
+    } else {
+      popupPhotosElement.classList.add(HIDDEN);
+    }
+
+    photoTemplate.remove();
 
     return mapCardElement;
   };
@@ -216,7 +220,6 @@
       closeButton.tabindex = '0';
 
       closeButton.addEventListener('click', closeButtonClickHandler);
-
       closeButton.addEventListener('keydown', function (e) {
         window.util.isEnterEvent(e, closeCard);
       });

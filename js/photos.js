@@ -152,8 +152,13 @@
   };
 
   var clearPhotos = function () {
+    var photoElements = adFormPhotoContainer.querySelectorAll('.' + AD_FORM_PHOTO_CLASS);
+
+    for (var i = 0; i < photoElements.length; i++) {
+      adFormPhotoContainer.removeChild(photoElements[i]);
+    }
+
     headerPreviewImg.src = EMPTY_AVATAR;
-    window.util.removeChildren(adFormPhotoContainer, '.' + AD_FORM_PHOTO_CLASS);
     adFormPhotoContainer.appendChild(adPhotoTemplate);
   };
 
