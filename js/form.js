@@ -4,18 +4,21 @@
   var ERROR_COLOR = '3px solid red';
   var NOERROR_COLOR = '1px solid #d9d9d3';
   var ERROR_CLASS = 'error';
+  var DEFAULT_PRICE = 1000;
 
-  var adForm = document.querySelector('.ad-form');
-  var title = adForm.querySelector('#title');
-  var descriptionTextArea = adForm.querySelector('#description');
-  var typeSelect = adForm.querySelector('#type');
-  var priceInput = adForm.querySelector('#price');
-  var timeinSelect = adForm.querySelector('#timein');
-  var timeoutSelect = adForm.querySelector('#timeout');
-  var roomNumberSelect = adForm.querySelector('#room_number');
-  var capacitySelect = adForm.querySelector('#capacity');
-  var submitButton = document.querySelector('.ad-form__submit');
-  var resetButton = document.querySelector('.ad-form__reset');
+  var adFormElement = document.querySelector('.ad-form');
+  var titleElement = adFormElement.querySelector('#title');
+  var descriptionElement = adFormElement.querySelector('#description');
+  var typeElement = adFormElement.querySelector('#type');
+  var priceElement = adFormElement.querySelector('#price');
+  var timeinElement = adFormElement.querySelector('#timein');
+  var timeoutElement = adFormElement.querySelector('#timeout');
+  var roomNumberElement = adFormElement.querySelector('#room_number');
+  var capacityElement = adFormElement.querySelector('#capacity');
+  var submitElement = document.querySelector('.ad-form__submit');
+  var resetElement = document.querySelector('.ad-form__reset');
+  var inputElements = adFormElement.querySelectorAll('input');
+  var fieldsetElements = document.querySelectorAll('fieldset');
 
   var checkForError = function (element) {
     if (!element.validity.valid) {
@@ -24,37 +27,34 @@
   };
 
   var colorizeErrors = function () {
-    var errorElements = adForm.querySelectorAll('.' + ERROR_CLASS);
+    var errorElements = adFormElement.querySelectorAll('.' + ERROR_CLASS);
 
-    for (var i = 0; i < errorElements.length; i++) {
-      errorElements[i].style.border = ERROR_COLOR;
-    }
+    Array.prototype.forEach.call(errorElements, function (item) {
+      item.style.border = ERROR_COLOR;
+    });
   };
 
   var setPrice = function (price) {
-    priceInput.min = price;
-    priceInput.placeholder = price;
+    priceElement.min = price;
+    priceElement.placeholder = price;
   };
 
   var clearFields = function () {
-    var allInputs = adForm.querySelectorAll('input');
-
-    for (var i = 0; i < allInputs.length; i++) {
-      var element = allInputs[i];
-
-      switch (element.type) {
+    Array.prototype.forEach.call(inputElements, function (item) {
+      switch (item.type) {
         case 'text':
         case 'file':
         case 'number':
-          element.value = '';
+          item.value = '';
           break;
         case 'checkbox':
-          element.checked = false;
+          item.checked = false;
           break;
       }
-    }
-    descriptionTextArea.value = '';
-    setPrice(1000);
+    });
+
+    descriptionElement.value = '';
+    setPrice(DEFAULT_PRICE);
   };
 
   var selectOption = function (element, value) {
@@ -62,15 +62,15 @@
   };
 
   var setDefaultValues = function () {
-    selectOption(typeSelect, 'flat');
-    selectOption(timeinSelect, '12:00');
-    selectOption(timeoutSelect, '12:00');
-    selectOption(roomNumberSelect, '1');
-    selectOption(capacitySelect, '1');
+    selectOption(typeElement, 'flat');
+    selectOption(timeinElement, '12:00');
+    selectOption(timeoutElement, '12:00');
+    selectOption(roomNumberElement, '1');
+    selectOption(capacityElement, '1');
   };
 
   var verifyPrice = function () {
-    var typeSelectedValue = typeSelect.options[typeSelect.selectedIndex].value;
+    var typeSelectedValue = typeElement.options[typeElement.selectedIndex].value;
     var price = 0;
 
     switch (typeSelectedValue) {
@@ -89,26 +89,26 @@
   };
 
   var verifyTime = function (evt) {
-    var sourceSelect = evt.target.id === 'timein' ? timeinSelect : timeoutSelect;
-    var targetSelect = evt.target.id === 'timein' ? timeoutSelect : timeinSelect;
+    var sourceSelect = evt.target.id === 'timein' ? timeinElement : timeoutElement;
+    var targetSelect = evt.target.id === 'timein' ? timeoutElement : timeinElement;
 
     targetSelect.value = sourceSelect.options[sourceSelect.selectedIndex].value;
   };
 
   var verifyCapacity = function () {
-    var roomNumberSelectedValue = roomNumberSelect.options[roomNumberSelect.selectedIndex].value;
-    var capacitySelectedValue = capacitySelect.options[capacitySelect.selectedIndex].value;
+    var roomNumberSelectedValue = roomNumberElement.options[roomNumberElement.selectedIndex].value;
+    var capacitySelectedValue = capacityElement.options[capacityElement.selectedIndex].value;
 
     if (roomNumberSelectedValue === '1' && capacitySelectedValue !== '1') {
-      capacitySelect.setCustomValidity('Можно выбрать только "для 1 гостя"');
+      capacityElement.setCustomValidity('Можно выбрать только "для 1 гостя"');
     } else if (roomNumberSelectedValue === '2' && (capacitySelectedValue !== '2' || capacitySelectedValue !== '1')) {
-      capacitySelect.setCustomValidity('Можно выбрать только "для 2 гостей" или "для 1 гостя"');
+      capacityElement.setCustomValidity('Можно выбрать только "для 2 гостей" или "для 1 гостя"');
     } else if (roomNumberSelectedValue === '3' && capacitySelectedValue === '0') {
-      capacitySelect.setCustomValidity('Можно выбрать только "для 3 гостей" или "для 2 гостей" или "для 1 гостя"');
+      capacityElement.setCustomValidity('Можно выбрать только "для 3 гостей" или "для 2 гостей" или "для 1 гостя"');
     } else if (roomNumberSelectedValue === '100' && capacitySelectedValue !== '0') {
-      capacitySelect.setCustomValidity('Можно выбрать только "не для гостей"');
+      capacityElement.setCustomValidity('Можно выбрать только "не для гостей"');
     } else {
-      capacitySelect.setCustomValidity('');
+      capacityElement.setCustomValidity('');
     }
   };
 
@@ -136,12 +136,12 @@
     }
   };
 
-  adForm.addEventListener('change', selectOnChangeHandler);
-  adForm.addEventListener('submit', function (evt) {
-    window.backend.upload(new FormData(adForm), function (response) {
+  adFormElement.addEventListener('change', selectOnChangeHandler);
+  adFormElement.addEventListener('submit', function (evt) {
+    window.backend.upload(new FormData(adFormElement), function (response) {
       if (response !== null) {
         window.util.showSuccess();
-        resetForm();
+        resetButtonClickHandler();
       }
     },
     function (errorMessage) {
@@ -151,50 +151,50 @@
     evt.preventDefault();
   });
 
-  var validate = function () {
+  var submitButtonClickHandler = function () {
     clearErrors();
-    checkForError(title);
-    checkForError(priceInput);
-    checkForError(capacitySelect);
+    checkForError(titleElement);
+    checkForError(priceElement);
+    checkForError(capacityElement);
     colorizeErrors();
   };
 
-  submitButton.addEventListener('click', validate);
+  submitElement.addEventListener('click', submitButtonClickHandler);
 
-  var resetForm = function () {
-    window.filter.toggleFilter(true);
-    window.filter.resetFilter();
+  var resetButtonClickHandler = function () {
+    window.filter.toggle(true);
+    window.filter.reset();
     window.map.setActiveState(false);
     window.card.toggleCardVisibility(false);
   };
 
-  resetButton.addEventListener('click', resetForm);
+  resetElement.addEventListener('click', resetButtonClickHandler);
 
   var clearErrors = function () {
-    var errorElements = adForm.querySelectorAll('.' + ERROR_CLASS);
+    var errorElements = adFormElement.querySelectorAll('.' + ERROR_CLASS);
 
-    for (var i = 0; i < errorElements.length; i++) {
-      var element = errorElements[i];
-      element.style.border = NOERROR_COLOR;
-      element.classList.remove(ERROR_CLASS);
-    }
+    Array.prototype.forEach.call(errorElements, function (item) {
+      item.style.border = NOERROR_COLOR;
+      item.classList.remove(ERROR_CLASS);
+    });
+
   };
 
-  var clearForm = function () {
-    window.photos.clearPhotos();
+  var clear = function () {
+    window.photos.clear();
     clearFields();
     setDefaultValues();
     clearErrors();
   };
 
-  window.form = {
-    clearForm: clearForm,
-    toggleFieldsets: function (flag) {
-      var fieldsets = document.querySelectorAll('fieldset');
+  var toggleFieldsets = function (flag) {
+    Array.prototype.forEach.call(fieldsetElements, function (item) {
+      item.disabled = flag;
+    });
+  };
 
-      for (var i = 0; i < fieldsets.length; i++) {
-        fieldsets[i].disabled = flag;
-      }
-    }
+  window.form = {
+    clear: clear,
+    toggleFieldsets: toggleFieldsets
   };
 })();

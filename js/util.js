@@ -13,10 +13,10 @@
 
   var createErrorMessage = function (message) {
     var errorElement = document.createElement('div');
-    var errorText = document.createElement('p');
-    errorText.textContent = message;
-    errorText.style.fontSize = '30px';
-    errorText.style.textAlign = 'center';
+    var errorTextElement = document.createElement('p');
+    errorTextElement.textContent = message;
+    errorTextElement.style.fontSize = '30px';
+    errorTextElement.style.textAlign = 'center';
     errorElement.style.position = 'absolute';
     errorElement.style.width = '700px';
     errorElement.style.height = '100px';
@@ -31,7 +31,7 @@
     errorElement.style.boxShadow = '0 0 80px black';
     errorElement.style.opacity = 0.9;
     errorElement.style.zIndex = 100;
-    errorElement.appendChild(errorText);
+    errorElement.appendChild(errorTextElement);
     document.body.insertAdjacentElement('afterbegin', errorElement);
     return errorElement;
   };

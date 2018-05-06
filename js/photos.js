@@ -12,13 +12,13 @@
     'image/png'
   ];
 
-  var adFormHeader = document.querySelector('.ad-form-header');
-  var avatar = adFormHeader.querySelector('#avatar');
-  var headerPreview = adFormHeader.querySelector('.ad-form-header__preview');
-  var headerPreviewImg = headerPreview.querySelector('img');
-  var adFormPhotoContainer = document.querySelector('.ad-form__photo-container');
-  var images = adFormPhotoContainer.querySelector('#images');
-  var adPhotoTemplate = adFormPhotoContainer.querySelector('.' + AD_FORM_PHOTO_CLASS);
+  var adFormHeaderElement = document.querySelector('.ad-form-header');
+  var avatarElement = adFormHeaderElement.querySelector('#avatar');
+  var headerPreviewElement = adFormHeaderElement.querySelector('.ad-form-header__preview');
+  var headerPreviewImgElement = headerPreviewElement.querySelector('img');
+  var adFormPhotoContainerElement = document.querySelector('.ad-form__photo-container');
+  var imagesElement = adFormPhotoContainerElement.querySelector('#images');
+  var adPhotoTemplateElement = adFormPhotoContainerElement.querySelector('.' + AD_FORM_PHOTO_CLASS);
   var dragSourceElement;
 
   var checkForValidFileType = function (file) {
@@ -80,18 +80,18 @@
 
     reader.addEventListener('load', function () {
       if (multiple) {
-        var photo = adPhotoTemplate.cloneNode(true);
-        photo.draggable = true;
-        photo.addEventListener('dragstart', photoDragstartHandle);
-        photo.addEventListener('dragover', photoDragoverHandle);
-        photo.addEventListener('drop', photoDropHandle);
-        var img = document.createElement('img');
-        img.style.width = '100%';
-        img.src = reader.result;
-        photo.appendChild(img);
-        adFormPhotoContainer.appendChild(photo);
+        var photoElement = adPhotoTemplateElement.cloneNode(true);
+        photoElement.draggable = true;
+        photoElement.addEventListener('dragstart', photoDragstartHandle);
+        photoElement.addEventListener('dragover', photoDragoverHandle);
+        photoElement.addEventListener('drop', photoDropHandle);
+        var imgElement = document.createElement('img');
+        imgElement.style.width = '100%';
+        imgElement.src = reader.result;
+        photoElement.appendChild(imgElement);
+        adFormPhotoContainerElement.appendChild(photoElement);
       } else {
-        headerPreviewImg.src = reader.result;
+        headerPreviewImgElement.src = reader.result;
       }
     });
 
@@ -113,17 +113,18 @@
 
       files = dataTransfer.files;
     } else {
-      files = isAvatar ? avatar.files : images.files;
+      files = isAvatar ? avatarElement.files : imagesElement.files;
     }
 
     if (files.length) {
       if (isAvatar) {
         readAndPreviewFile(files[0], !isAvatar);
       } else {
-        for (var i = 0; i < files.length; i++) {
-          readAndPreviewFile(files[i], !isAvatar);
-        }
-        adPhotoTemplate.remove();
+        Array.prototype.forEach.call(files, function (item) {
+          readAndPreviewFile(item, !isAvatar);
+        });
+
+        adPhotoTemplateElement.remove();
       }
     }
   };
@@ -136,35 +137,46 @@
     readFiles(evt);
   };
 
-  adFormHeader.addEventListener('dragenter', dragenterHandler);
-  adFormHeader.addEventListener('dragover', dragoverHandler);
-  adFormHeader.addEventListener('drop', adFormHeaderDropHandler);
-
-  adFormPhotoContainer.addEventListener('dragenter', dragenterHandler);
-  adFormPhotoContainer.addEventListener('dragover', dragoverHandler);
-  adFormPhotoContainer.addEventListener('drop', adFormPhotoContainerDropHandler);
-
-
-  var setDropSettings = function () {
-    images.multiple = true;
-    images.accept = ACCEPTED_TYPES;
-    avatar.accept = ACCEPTED_TYPES;
+  var bindListeners = function () {
+    adFormHeaderElement.addEventListener('dragenter', dragenterHandler);
+    adFormHeaderElement.addEventListener('dragover', dragoverHandler);
+    adFormHeaderElement.addEventListener('drop', adFormHeaderDropHandler);
+    adFormPhotoContainerElement.addEventListener('dragenter', dragenterHandler);
+    adFormPhotoContainerElement.addEventListener('dragover', dragoverHandler);
+    adFormPhotoContainerElement.addEventListener('drop', adFormPhotoContainerDropHandler);
   };
 
-  var clearPhotos = function () {
-    var photoElements = adFormPhotoContainer.querySelectorAll('.' + AD_FORM_PHOTO_CLASS);
+  var unbindListeners = function () {
+    adFormHeaderElement.removeEventListener('dragenter', dragenterHandler);
+    adFormHeaderElement.removeEventListener('dragover', dragoverHandler);
+    adFormHeaderElement.removeEventListener('drop', adFormHeaderDropHandler);
+    adFormPhotoContainerElement.removeEventListener('dragenter', dragenterHandler);
+    adFormPhotoContainerElement.removeEventListener('dragover', dragoverHandler);
+    adFormPhotoContainerElement.removeEventListener('drop', adFormPhotoContainerDropHandler);
+  };
 
-    for (var i = 0; i < photoElements.length; i++) {
-      adFormPhotoContainer.removeChild(photoElements[i]);
-    }
+  var setDropSettings = function () {
+    imagesElement.multiple = true;
+    imagesElement.accept = ACCEPTED_TYPES;
+    avatarElement.accept = ACCEPTED_TYPES;
+  };
 
-    headerPreviewImg.src = EMPTY_AVATAR;
-    adFormPhotoContainer.appendChild(adPhotoTemplate);
+  var clear = function () {
+    var photoElements = adFormPhotoContainerElement.querySelectorAll('.' + AD_FORM_PHOTO_CLASS);
+
+    Array.prototype.forEach.call(photoElements, function (item) {
+      adFormPhotoContainerElement.removeChild(item);
+    });
+
+    headerPreviewImgElement.src = EMPTY_AVATAR;
+    adFormPhotoContainerElement.appendChild(adPhotoTemplateElement);
   };
 
   window.photos = {
-    clearPhotos: clearPhotos,
-    readFiles: readFiles
+    clear: clear,
+    readFiles: readFiles,
+    bindListeners: bindListeners,
+    unbindListeners: unbindListeners
   };
 
   setDropSettings();

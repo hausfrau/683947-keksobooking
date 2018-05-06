@@ -1,10 +1,10 @@
 'use strict';
 
 (function () {
-  var createPin = function (advertisement) {
-    var template = document.querySelector('template');
-    var mapPinTemplate = template.content.querySelector('.map__pin');
-    var mapPinElement = mapPinTemplate.cloneNode(true);
+  var create = function (advertisement) {
+    var templateElement = document.querySelector('template');
+    var mapPinTemplateElement = templateElement.content.querySelector('.map__pin');
+    var mapPinElement = mapPinTemplateElement.cloneNode(true);
     var imgElement = mapPinElement.querySelector('img');
 
     mapPinElement.tabindex = '0';
@@ -17,6 +17,6 @@
   };
 
   window.pin = {
-    createPin: createPin
+    create: create
   };
 })();

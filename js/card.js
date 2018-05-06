@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var PRICE_SUFFIX = '&#x20bd;/ночь';
   var HIDDEN = 'hidden';
   var POPUP_FEATURE = 'popup__feature';
   var POPUP_FEATURES = 'popup__features';
@@ -11,11 +12,11 @@
     'bungalo': 'Бунгало'
   };
 
-  var map = document.querySelector('.map');
-  var mapFiltersContainer = document.querySelector('.map__filters-container');
-  var template = document.querySelector('template');
-  var mapCardTemplate = template.content.querySelector('.map__card');
-  var mapCardElement = mapCardTemplate.cloneNode(true);
+  var mapElement = document.querySelector('.map');
+  var mapFiltersContainerElement = document.querySelector('.map__filters-container');
+  var templateElement = document.querySelector('template');
+  var mapCardTemplateElement = templateElement.content.querySelector('.map__card');
+  var mapCardElement = mapCardTemplateElement.cloneNode(true);
   var titleElement = mapCardElement.querySelector('.popup__title');
   var addressElement = mapCardElement.querySelector('.popup__text--address');
   var priceElement = mapCardElement.querySelector('.popup__text--price');
@@ -25,11 +26,12 @@
   var descriptionElement = mapCardElement.querySelector('.popup__description');
   var avatarElement = mapCardElement.querySelector('.popup__avatar');
   var popupPhotosElement = mapCardElement.querySelector('.popup__photos');
-  var photoTemplate = popupPhotosElement.querySelector('img');
-  var closeButton = mapCardElement.querySelector('.popup__close');
+  var photoTemplateElement = popupPhotosElement.querySelector('img');
+  var closeElement = mapCardElement.querySelector('.popup__close');
+  var priceSuffixElement = document.createElement('span');
 
   var renderPopupPhoto = function (photo) {
-    var photoElement = photoTemplate.cloneNode(true);
+    var photoElement = photoTemplateElement.cloneNode(true);
 
     photoElement.src = photo;
 
@@ -38,9 +40,10 @@
 
   var renderPopupPhotos = function (photos) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < photos.length; i++) {
-      fragment.appendChild(renderPopupPhoto(photos[i]));
-    }
+
+    photos.forEach(function (item) {
+      fragment.appendChild(renderPopupPhoto(item));
+    });
 
     popupPhotosElement.appendChild(fragment);
   };
@@ -56,30 +59,22 @@
 
   var renderPopupFeatures = function (parentElement, features) {
     var featuresLength = features.length;
-    if (featuresLength > 0) {
+    if (featuresLength) {
       var fragment = document.createDocumentFragment();
       var ulElement = document.createElement('ul');
       ulElement.className = POPUP_FEATURES;
 
-      for (var i = 0; i < featuresLength; i++) {
-        fragment.appendChild(renderPopupFeature(features[i]));
-      }
+      features.forEach(function (item) {
+        fragment.appendChild(renderPopupFeature(item));
+      });
 
       ulElement.appendChild(fragment);
       parentElement.appendChild(ulElement);
     }
   };
 
-  var clearPhotos = function () {
-    var images = popupPhotosElement.querySelectorAll('img');
-
-    for (var i = 0; i < images.length; i++) {
-      popupPhotosElement.removeChild(images[i]);
-    }
-  };
-
   var clearCard = function () {
-    var features = mapCardElement.querySelector('.' + POPUP_FEATURES);
+    var featureElement = mapCardElement.querySelector('.' + POPUP_FEATURES);
 
     avatarElement.src = '';
     avatarElement.alt = '';
@@ -90,21 +85,21 @@
     capacityElement.textContent = '';
     timeElement.textContent = '';
 
-    if (features !== null) {
-      mapCardElement.removeChild(features);
+    if (featureElement !== null) {
+      mapCardElement.removeChild(featureElement);
     }
 
     descriptionElement.textContent = '';
-    clearPhotos();
-    popupPhotosElement.appendChild(photoTemplate);
+    popupPhotosElement.innerHTML = '';
+    popupPhotosElement.appendChild(photoTemplateElement);
   };
 
   var fillCard = function (advertisement) {
     var childElements = mapCardElement.querySelectorAll('.' + HIDDEN);
 
-    for (var i = 0; i < childElements.length; i++) {
-      childElements[i].classList.remove(HIDDEN);
-    }
+    Array.prototype.forEach.call(childElements, function (item) {
+      item.classList.remove(HIDDEN);
+    });
 
     clearCard();
 
@@ -128,7 +123,9 @@
 
     var price = advertisement.offer.price;
     if (price) {
-      priceElement.innerHTML = price + '&#x20bd;<span>/ночь</span>';
+      priceSuffixElement.innerHTML = PRICE_SUFFIX;
+      priceElement.textContent = price;
+      priceElement.appendChild(priceSuffixElement);
     } else {
       priceElement.classList.add(HIDDEN);
     }
@@ -172,13 +169,13 @@
     }
 
     var photos = advertisement.offer.photos;
-    if (photos.length > 0) {
+    if (photos.length) {
       renderPopupPhotos(photos);
     } else {
       popupPhotosElement.classList.add(HIDDEN);
     }
 
-    photoTemplate.remove();
+    photoTemplateElement.remove();
 
     return mapCardElement;
   };
@@ -192,44 +189,45 @@
   };
 
   var closeButtonClickHandler = function () {
-    closeCard();
+    close();
   };
 
-  var closeCard = function () {
+  var escKeydownHandler = function (evt) {
+    window.util.isEscEvent(evt, close);
+  };
+
+  var enterKeydownHandler = function (e) {
+    window.util.isEnterEvent(e, close);
+  };
+
+  var close = function () {
     toggleCardVisibility(false);
 
-    document.removeEventListener('keydown', function (evt) {
-      window.util.isEscEvent(evt, closeCard);
-    });
-    closeButton.removeEventListener('click', closeButtonClickHandler);
-    closeButton.removeEventListener('keydown', function (e) {
-      window.util.isEnterEvent(e, closeCard);
-    });
+    document.removeEventListener('keydown', escKeydownHandler);
+    closeElement.removeEventListener('click', closeButtonClickHandler);
+    closeElement.removeEventListener('keydown', enterKeydownHandler);
   };
 
-  var openCard = function (advertisement) {
+  var open = function (advertisement) {
     var fragment = document.createDocumentFragment();
     fragment.appendChild(fillCard(advertisement));
-    map.insertBefore(fragment, mapFiltersContainer);
+    mapElement.insertBefore(fragment, mapFiltersContainerElement);
 
-    document.addEventListener('keydown', function (evt) {
-      window.util.isEscEvent(evt, closeCard);
-    });
+    document.addEventListener('keydown', escKeydownHandler);
 
-    if (closeButton !== null) {
-      closeButton.tabindex = '0';
+    if (closeElement !== null) {
+      closeElement.tabindex = '0';
 
-      closeButton.addEventListener('click', closeButtonClickHandler);
-      closeButton.addEventListener('keydown', function (e) {
-        window.util.isEnterEvent(e, closeCard);
-      });
+      closeElement.addEventListener('click', closeButtonClickHandler);
+      closeElement.addEventListener('keydown', enterKeydownHandler);
     }
 
     toggleCardVisibility(true);
   };
 
   window.card = {
-    openCard: openCard,
+    close: close,
+    open: open,
     toggleCardVisibility: toggleCardVisibility
   };
 })();

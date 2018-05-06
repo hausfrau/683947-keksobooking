@@ -3,17 +3,17 @@
 (function () {
   var advertisements = [];
 
-  var setData = function (response) {
+  var set = function (response) {
     window.data.advertisements = response;
   };
 
-  var isDataLoaded = function () {
+  var isLoaded = function () {
     return window.data.advertisements.length !== 0;
   };
 
   window.data = {
-    setData: setData,
+    set: set,
     advertisements: advertisements,
-    isDataLoaded: isDataLoaded
+    isLoaded: isLoaded
   };
 })();
