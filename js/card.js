@@ -85,7 +85,7 @@
     capacityElement.textContent = '';
     timeElement.textContent = '';
 
-    if (featureElement !== null) {
+    if (featureElement) {
       mapCardElement.removeChild(featureElement);
     }
 
@@ -215,7 +215,7 @@
 
     document.addEventListener('keydown', escKeydownHandler);
 
-    if (closeElement !== null) {
+    if (closeElement) {
       closeElement.tabindex = '0';
 
       closeElement.addEventListener('click', closeButtonClickHandler);

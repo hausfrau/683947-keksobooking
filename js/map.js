@@ -141,7 +141,7 @@
   var openCard = function (evt) {
     var element = evt.target;
 
-    while (!element.classList.contains(MAP_PIN_SELECTOR) && element.parentElement !== null) {
+    while (!element.classList.contains(MAP_PIN_SELECTOR) && element.parentElement) {
       element = element.parentElement;
     }
 

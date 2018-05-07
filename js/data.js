@@ -8,7 +8,7 @@
   };
 
   var isLoaded = function () {
-    return window.data.advertisements.length !== 0;
+    return window.data.advertisements.length;
   };
 
   window.data = {

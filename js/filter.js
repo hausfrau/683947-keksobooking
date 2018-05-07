@@ -140,7 +140,7 @@
 
     var value = null;
 
-    while (!element.classList.contains(MAP_FILTER) && !element.classList.contains(MAP_CHECKBOX) && element.parentElement !== null) {
+    while (!element.classList.contains(MAP_FILTER) && !element.classList.contains(MAP_CHECKBOX) && element.parentElement) {
       element = element.parentElement;
     }
 

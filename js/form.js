@@ -139,7 +139,7 @@
   adFormElement.addEventListener('change', selectOnChangeHandler);
   adFormElement.addEventListener('submit', function (evt) {
     window.backend.upload(new FormData(adFormElement), function (response) {
-      if (response !== null) {
+      if (response) {
         window.util.showSuccess();
         resetButtonClickHandler();
       }
