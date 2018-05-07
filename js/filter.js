@@ -18,19 +18,21 @@
   var MIDDLE = 'middle';
   var LOW = 'low';
   var HIGH = 'high';
+  var LOW_PRICE = 10000;
+  var HIGH_PRICE = 50000;
 
-  var mapFilters = document.querySelector('.map__filters');
-  var housingType = mapFilters.querySelector('#housing-type');
-  var housingPrice = mapFilters.querySelector('#housing-price');
-  var housingRooms = mapFilters.querySelector('#housing-rooms');
-  var housingGuests = mapFilters.querySelector('#housing-guests');
-  var features = mapFilters.querySelector('.map__features');
-  var filterWifi = features.querySelector('#filter-wifi');
-  var filterDishwasher = features.querySelector('#filter-dishwasher');
-  var filterParking = features.querySelector('#filter-parking');
-  var filterWasher = features.querySelector('#filter-washer');
-  var filterElevator = features.querySelector('#filter-elevator');
-  var filterConditioner = features.querySelector('#filter-conditioner');
+  var mapFiltersElement = document.querySelector('.map__filters');
+  var housingTypeElement = mapFiltersElement.querySelector('#housing-type');
+  var housingPriceElement = mapFiltersElement.querySelector('#housing-price');
+  var housingRoomsElement = mapFiltersElement.querySelector('#housing-rooms');
+  var housingGuestsElement = mapFiltersElement.querySelector('#housing-guests');
+  var featuresElement = mapFiltersElement.querySelector('.map__features');
+  var filterWifiElement = featuresElement.querySelector('#filter-wifi');
+  var filterDishwasherElement = featuresElement.querySelector('#filter-dishwasher');
+  var filterParkingElement = featuresElement.querySelector('#filter-parking');
+  var filterWasherElement = featuresElement.querySelector('#filter-washer');
+  var filterElevatorElement = featuresElement.querySelector('#filter-elevator');
+  var filterConditionerElement = featuresElement.querySelector('#filter-conditioner');
 
   var featuresClassListMap = {
     'filter-wifi': 'wifi',
@@ -67,18 +69,18 @@
     selectedOptions['filter-conditioner'] = false;
   };
 
-  var resetFilter = function () {
+  var reset = function () {
     window.filter.isUnFiltered = true;
-    housingType.value = 'any';
-    housingPrice.value = 'any';
-    housingRooms.value = 'any';
-    housingGuests.value = 'any';
-    filterWifi.checked = false;
-    filterDishwasher.checked = false;
-    filterParking.checked = false;
-    filterWasher.checked = false;
-    filterElevator.checked = false;
-    filterConditioner.checked = false;
+    housingTypeElement.value = 'any';
+    housingPriceElement.value = 'any';
+    housingRoomsElement.value = 'any';
+    housingGuestsElement.value = 'any';
+    filterWifiElement.checked = false;
+    filterDishwasherElement.checked = false;
+    filterParkingElement.checked = false;
+    filterWasherElement.checked = false;
+    filterElevatorElement.checked = false;
+    filterConditionerElement.checked = false;
     resetSelectedOptions();
   };
 
@@ -89,13 +91,13 @@
         satisfaction = true;
         break;
       case MIDDLE:
-        satisfaction = advertisementPrice >= 10000 && advertisementPrice <= 50000;
+        satisfaction = advertisementPrice >= LOW_PRICE && advertisementPrice <= HIGH_PRICE;
         break;
       case LOW:
-        satisfaction = advertisementPrice <= 10000;
+        satisfaction = advertisementPrice <= LOW_PRICE;
         break;
       case HIGH:
-        satisfaction = advertisementPrice >= 50000;
+        satisfaction = advertisementPrice >= HIGH_PRICE;
         break;
     }
 
@@ -138,41 +140,36 @@
 
     var value = null;
 
-    while (!element.classList.contains(MAP_FILTER) && !element.classList.contains(MAP_CHECKBOX) && element.parentElement !== null) {
+    while (!element.classList.contains(MAP_FILTER) && !element.classList.contains(MAP_CHECKBOX) && element.parentElement) {
       element = element.parentElement;
     }
 
     if (element.value) {
-      if (element.type === 'checkbox') {
-        value = element.checked;
-      } else {
-        value = element.value;
-      }
-
+      value = element.type === 'checkbox' ? element.checked : element.value;
       selectedOptions[element.id] = value;
 
       window.util.debounce(updateAdvertisements);
     }
   };
 
-  var toggleFilter = function (flag) {
-    var mapFilter = document.querySelectorAll('.' + MAP_FILTER);
-    var mapCheckbox = document.querySelectorAll('.' + MAP_CHECKBOX);
+  var toggle = function (flag) {
+    var mapFilterElements = document.querySelectorAll('.' + MAP_FILTER);
+    var mapCheckboxElements = document.querySelectorAll('.' + MAP_CHECKBOX);
 
-    for (var i = 0; i < mapFilter.length; i++) {
-      mapFilter[i].disabled = flag;
-    }
+    Array.prototype.forEach.call(mapFilterElements, function (item) {
+      item.disabled = flag;
+    });
 
-    for (var j = 0; j < mapCheckbox.length; j++) {
-      mapCheckbox[j].disabled = flag;
-    }
+    Array.prototype.forEach.call(mapCheckboxElements, function (item) {
+      item.disabled = flag;
+    });
   };
 
   window.filter = {
     ADVERTISEMENT_COUNT: ADVERTISEMENT_COUNT,
-    toggleFilter: toggleFilter,
-    resetFilter: resetFilter
+    toggle: toggle,
+    reset: reset
   };
 
-  mapFilters.addEventListener('change', mapFiltersChangeHandler);
+  mapFiltersElement.addEventListener('change', mapFiltersChangeHandler);
 })();
