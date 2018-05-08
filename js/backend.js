@@ -7,7 +7,6 @@
   var SUCCESSFUL_STATUS = 200;
   var INVALID_REQUEST_STATUS = 400;
   var NOTHING_FOUND_STATUS = 404;
-  var isDataLoading = false;
 
   var load = function (onLoad, onError) {
     window.data.isDataLoading = true;
@@ -67,6 +66,6 @@
   window.backend = {
     load: load,
     upload: upload,
-    isDataLoading: isDataLoading
+    isDataLoading: false
   };
 })();

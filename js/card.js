@@ -58,8 +58,7 @@
   };
 
   var renderPopupFeatures = function (parentElement, features) {
-    var featuresLength = features.length;
-    if (featuresLength) {
+    if (features.length) {
       var fragment = document.createDocumentFragment();
       var ulElement = document.createElement('ul');
       ulElement.className = POPUP_FEATURES;
@@ -209,9 +208,7 @@
   };
 
   var open = function (advertisement) {
-    var fragment = document.createDocumentFragment();
-    fragment.appendChild(fillCard(advertisement));
-    mapElement.insertBefore(fragment, mapFiltersContainerElement);
+    mapElement.insertBefore(fillCard(advertisement), mapFiltersContainerElement);
 
     document.addEventListener('keydown', escKeydownHandler);
 
